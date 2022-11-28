@@ -1,25 +1,43 @@
-function linG3DAliveClone(pathdata,cloneNum)
+function linG3DAliveClone
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% This is a companion code for the paper "LinG3D: Visualizing the  %%
 %% Spatio-Temporal Dynamics of Clonal Evolution" by A. Hu, A.M.E.   %%
-%% Ojwang', and K.A. Rejniak                                        %%
+%% Ojwang', K.D. Olumoyin, and K.A. Rejniak                         %%
 %% This code generates the 3D lineage tree of one clone of number   %%
 %% specified in 'cloneNum' taking into account only the cells that  %%
 %% survived to the end of simulation. It uses data from directory   %%
 %% 'pathdata'.                                                      %%
-%% It requires the following data:                                  %%
 %%                                                                  %%
-%% and the following parameters need to be specified:               %%  
-%%                                                                  %%
+%% The following parameters need to be specified:                   %%
+%%   pathdata  -- directory with input data                         %%
+%%   CloneNum  -- clone number to be drawn                          %%
+%% It requires the following data in the pathdata/data/ directory:  %%
+%%   cell_history.txt -- file with info about each cell             %%
+%%   cellID_##.txt    -- cell IDs in a file with index number ##    %% 
+%%   cellXY_##.txt    -- cell coordinates in a file with index ##   %%
+%%   drug.txt         -- concentration of a drug for background     %% 
+%% The following parameters are project-dependent and should be     %%
+%% specified for a given project:                                   %%
+%%   xmin,xmax,ymin,ymax -- dimensions of the spacial domain        %%
+%%   tmin, tmax          -- dimensions of the temporal domain       %%
+%%   fileStep            -- frequency of the sampled data           %% 
 %% for the examples discussed in the paper use:                     %%
-%% example 1: pathdata='exampleB05';  cloneNum from 0 to 9          %%
-%% example 2: pathdata='exampleB005'; cloneNum from 0 to 147        %%
+%%   example 1: pathdata='exampleB05';  cloneNum between 0 and 9    %%
+%%   example 2: pathdata='exampleB005'; cloneNum between 0 and 147  %%
 %%                                                                  %%
-%% May 01, 2022                                                     %%
+%% October 31, 2022                                                 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%   % example 1
+  pathdata='exampleB005';
+  cloneNum=1;
 
- toPrint=0;            % save the final figure 
+% % example 2
+%  pathdata='exampleB05';
+%  cloneNum=2;
+
+
+ toPrint=1;            % save the final figure 
  IsGradient=1;         % draw drug gradient in the background 1-yes; 0-no;
  dataDirectory='/data/';  % directory with cell and drug data
   
@@ -46,8 +64,8 @@ function linG3DAliveClone(pathdata,cloneNum)
  
  % draw background with drug gradient
  if IsGradient==1
-   oxy=load([pathdata,dataDirectory,'drug.txt']);
-   DrawBackground(oxy,tmax,timeStep,xmin,xmax,ymin,ymax)  
+   drug=load([pathdata,dataDirectory,'drug.txt']);
+   DrawBackground(drug,tmax,timeStep,xmin,xmax,ymin,ymax)  
  end
 
 
@@ -61,7 +79,7 @@ function linG3DAliveClone(pathdata,cloneNum)
 
   disp(['clone=',num2str(cloneNum)]);
 
-  % identify all ssurvivrd cells from a given clone 
+  % identify all survived cells from a given clone 
   indLast=[]; Nlast=0;
   for ii=1:length(cellID)     % all cells in the last file
     if hist(cellID(ii),2)==cloneNum
@@ -159,26 +177,26 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function  DrawBackground(oxy,tmax,timeStep,xmin,xmax,ymin,ymax)  
+function  DrawBackground(drug,tmax,timeStep,xmin,xmax,ymin,ymax)  
  
-  oxymin=min(min(oxy)); oxymax=max(max(oxy)); oxystep=(oxymax-oxymin)/4;
+  drugmin=min(min(drug)); drugmax=max(max(drug)); drugstep=(drugmax-drugmin)/4;
   
   kk=tmax/timeStep;
-  [Nx,Ny]=size(oxy); hgx=(xmax-xmin)/Nx; hgy=(ymax-ymin)/Ny;
+  [Nx,Ny]=size(drug); hgx=(xmax-xmin)/Nx; hgy=(ymax-ymin)/Ny;
 
   for ii=1:Nx
     for jj=1:Ny
-      if (oxy(ii,jj)>=oxymin)&&(oxy(ii,jj)<oxymin+oxystep)
+      if (drug(ii,jj)>=drugmin)&&(drug(ii,jj)<drugmin+drugstep)
         patch([xmin+(ii-1)*hgx,xmin+ii*hgx,xmin+ii*hgx,xmin+(ii-1)*hgx,...
         xmin+(ii-1)*hgx],[kk,kk,kk,kk,kk],[ymin+(jj-1)*hgy,ymin+(jj-1)*hgy,...
         ymin+jj*hgy,ymin+jj*hgy,ymin+(jj-1)*hgy],'b','edgecolor','none')
         hold on
-      elseif (oxy(ii,jj)>=oxymin+oxystep)&&(oxy(ii,jj)<oxymin+2*oxystep)
+      elseif (drug(ii,jj)>=drugmin+drugstep)&&(drug(ii,jj)<drugmin+2*drugstep)
         patch([xmin+(ii-1)*hgx,xmin+ii*hgx,xmin+ii*hgx,xmin+(ii-1)*hgx,...
         xmin+(ii-1)*hgx],[kk,kk,kk,kk,kk],[ymin+(jj-1)*hgy,ymin+(jj-1)*hgy,...
         ymin+jj*hgy,ymin+jj*hgy,ymin+(jj-1)*hgy],'c','edgecolor','none')
         hold on
-      elseif (oxy(ii,jj)>=oxymin+2*oxystep)&&(oxy(ii,jj)<oxymin+3*oxystep)
+      elseif (drug(ii,jj)>=drugmin+2*drugstep)&&(drug(ii,jj)<drugmin+3*drugstep)
         patch([xmin+(ii-1)*hgx,xmin+ii*hgx,xmin+ii*hgx,xmin+(ii-1)*hgx,...
         xmin+(ii-1)*hgx],[kk,kk,kk,kk,kk],[ymin+(jj-1)*hgy,ymin+(jj-1)*hgy,...
         ymin+jj*hgy,ymin+jj*hgy,ymin+(jj-1)*hgy],'y','edgecolor','none')
