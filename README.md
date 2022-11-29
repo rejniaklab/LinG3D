@@ -6,10 +6,12 @@ This code generates the 3D lineage trees of (1) all clones; (2) individual clone
 
 **Dependencies**
 MATLAB software (the R2020b version on a Mac computer was used for all testing)
+
 R language (the R version 4.1.1 on a Mac computer (macOS Big Sur) was used for all testing)
 
 **Installing**
 Matlab: this code does not need installation
+
 R: the required libraries are readr, rapportools, and rgl. 
         install.packages(“readr”)   
         install.packages (“rapportools”)
