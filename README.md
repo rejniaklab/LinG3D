@@ -25,6 +25,7 @@ R: the required libraries are readr, rapportools, and rgl.
         install.packages (“rgl”)
         
 Python: It requires the following libraries:
+
          Numpy
         
          Scipy
