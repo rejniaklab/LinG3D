@@ -24,24 +24,32 @@ linG3DAll <- function(){
 ##                                                                 ##
 ## October 31, 2022                                                ##
 #####################################################################
+  
 library(readr)  # to read text files
 library(rapportools)  # for is.empty
 library(rgl) # for 3D
 
 options(scipen = 999)  # disables printing in scientific notation 
-pathdata='exampleB005';
-NumberClones=9;
+# pathdata='exampleB005';
+# NumberClones=9;
 # pathdata='exampleB05';
 # NumberClones=147;
+pathdata='exampleExp';
+NumberClones=10;
 
 toPrint <- 1 # save the final figure
-IsGradient <- 1 # draw drug gradient in the background 1-yes; 0-no;
+IsGradient <- 0 # draw drug gradient in the background 1-yes; 0-no;
 dataDirectory <- '/data/'# directory with cell and drug data
-xmin <- -100; xmax <- 100; ymin <- xmin; ymax <- xmax # 2D domain boundaries
-tmin <- 0; tmax <- 100000 # time/iteration boundaries
+# xmin <- -100; xmax <- 100; ymin <- xmin; ymax <- xmax # 2D domain boundaries
+# tmin <- 0; tmax <- 100000 # time/iteration boundaries
+# timeStep <- (tmax-tmin)/(2.5*(xmax-xmin))
+# fileStep <- 2000 # frequency of data 
+stepDraw <- 4
+
+xmin <- 0; xmax <- 1500; ymin <- xmin; ymax <- 1000 # 2D domain boundaries
+tmin <- 0; tmax <- 864 # time/iteration boundaries
 timeStep <- (tmax-tmin)/(2.5*(xmax-xmin))
-fileStep <- 2000 # frequency of data 
-stepDraw <- 200
+fileStep <- 4 # frequency of data 
 
 if (toPrint==1){
   pathFigs <- paste0(pathdata,'/fig_clones')
@@ -50,24 +58,24 @@ if (toPrint==1){
 #####################################################################
 #---------prepare 3d view using rgl---------------------------------#
 
-rgl_add_axes <- function(x, y, z, axis.col = "white",  
-                         show.plane = FALSE,show.bbox = FALSE) { 
-  lim <- function(x){c(-max(abs(x)), max(abs(x))) * 1.05}  
-  xlim <- lim(x); ylim <- y; zlim <- lim(z)  # Add axes
-  rgl.lines(xlim, c(0, 0), c(0, 0), color = axis.col)
-  rgl.lines(c(0, 0), ylim, c(0, 0), color = axis.col)
-  rgl.lines(c(0, 0), c(0, 0), zlim, color = axis.col)}
 open3d()
 axes3d()
-rgl_add_axes(c(xmin,xmax),c(0,tmax/timeStep),c(ymin,ymax))  # set the axes
+view3d()
+add_axes <- function(x, y, z, axis.col = NA) {   
+  minnum <- function(k){c(-max(abs(k)), max(abs(k))) * 1.05}  
+  xminnum <- minnum(x);  zminnum <- minnum(z); 
+  rgl.lines(xminnum, c(0, 0), c(0, 0), color = NA)
+  rgl.lines(c(0, 0), y, c(0, 0), color = NA)
+  rgl.lines(c(0, 0), c(0, 0), zminnum, color = NA) } # needed to properly position the 3D
+add_axes(c(xmin,xmax),c(0,tmax/timeStep),c(ymin,ymax))  # set the axes
 aspect3d(1, 2, 1)  # required aspect ratio x=1, y=2, z=1
-grid3d(c("x+-","y+","z-"),col = "#DCDCDC",n=6)  # set grid on the visible axes only
-view3d(-5,-60)  # the first view point
-goodview <- matrix(c(0.85344279,-0.5025685,0.1380589,0,
-                     0.07258454,0.3769233,0.9233962,0,
-                     -0.51610750,-0.7780447,0.3581611,
-                     0,0,0,0,1), nrow = 4,ncol = 4, byrow = TRUE)  # user view captured from screen
-par3d(windowRect = c(20,30, 550, 550), userMatrix = goodview,zoom=0.75, cex=0.8)  # set final view
+grid3d(c("x+-","y+","z-"), col = "#DCDCDC", n = 6)  # set grid on the visible axes only
+goodview <- matrix(c(0.6949471,-0.7133674,0.09030721,0,
+                     0.1982032,0.3107649,0.92959183,0,
+                     -0.6912048,-0.6281178,0.35735679,0,
+                     0,0,0,1), nrow = 4,ncol = 4, byrow = TRUE)  # user view captured from screen
+highlevel()
+par3d(windowRect = c(0,0, 1200, 1200), userMatrix = goodview, zoom=0.75, cex=2)  # set final view
 
 ###############################################################################
 #---------prepare color code--------------------------------------------------#
@@ -88,7 +96,7 @@ col <- c("#FF00FF","#FF0000","#00FFFF","#0000FF","#00FF00","#000000","#FFBF00",
          "#DDA0DD","#FFEBCD"	)
 Ncol <- length(col)
 
-#######################################################################
+##############################################################################
 
 DrawBackground <- function(drug,tmax,timeStep,xmin,xmax,ymin,ymax){
   
@@ -133,10 +141,13 @@ if (IsGradient==1){
   DrawBackground(drug,tmax,timeStep,xmin,xmax,ymin,ymax)
 }
 
+##############################################################################
+
 # load cell history file
 hist <- read.table(paste0(pathdata,dataDirectory,'cell_history.txt'),header = F)
+# [cell ID, clone ID, mother ID, birth iter, div/death iter]
 
-for (cloneNum in 0:NumberClones) {
+for (cloneNum in 1:NumberClones) {
 print(paste0('clone = ',cloneNum,' of ',NumberClones))
 
 indLast=which(hist[,2]==cloneNum)  
@@ -183,14 +194,14 @@ for (ii in 1:length(indLast)){# for every cell with index in indLast
       colnames(fileMe2ID) <- NULL;
       fileMe2XY <- as.matrix(read.table(paste0(pathdata,dataDirectory,'cellXY_',kkStart,'.txt'),header = F),dimnames=NULL)
       colnames(fileMe2XY) <- NULL;
-      indMe2=which(fileMe2ID==mothNum)# which current indices of mother cellID
+      indMe2=which(fileMe2ID==mothNum)  # which current indices of mother cellID
       if (is.empty(indMe2)){
       } else {
         Nmatrix <- Nmatrix+1  # save branch to draw [x1,t1,y1,x2,t2,y2]
         
       }
     } else {
-      Nmatrix <- Nmatrix+1# save branch to draw [x1,t1,y1,x2,t2,y2]
+      Nmatrix <- Nmatrix+1  # save branch to draw [x1,t1,y1,x2,t2,y2]
       
     }
   }
@@ -205,11 +216,11 @@ Nmatrix <- 0
 for (ii in 1:length(indLast)){# for every cell with index in indLast
   if (ii%%100==0) { print('... calculating'); }
   
-  cellNum <- hist[indLast[ii],1]# cell ID
-  mothNum <- hist[indLast[ii],3]# mother ID
-  strtNum <- hist[indLast[ii],4]# cell birth
+  cellNum <- hist[indLast[ii],1]  # cell ID
+  mothNum <- hist[indLast[ii],3]  # mother ID
+  strtNum <- hist[indLast[ii],4]  # cell birth
   Num  <- hist[indLast[ii],5]
-  Num <- max(tmax,min(Num,tmax))# cell div/death/tmax
+  Num <- max(tmax,min(Num,tmax))  # cell div/death/tmax
   
   # find all appearances of the cellNum
   kkStart <- fileStep*floor(strtNum/fileStep)  # initial file number
@@ -241,7 +252,7 @@ for (ii in 1:length(indLast)){# for every cell with index in indLast
       colnames(fileMe2ID) <- NULL;
       fileMe2XY <- as.matrix(read.table(paste0(pathdata,dataDirectory,'cellXY_',kkStart,'.txt'),header = F),dimnames=NULL)
       colnames(fileMe2XY) <- NULL;
-      indMe2=which(fileMe2ID==mothNum)# which current indices of mother cellID
+      indMe2=which(fileMe2ID==mothNum)  # which current indices of mother cellID
       if (is.empty(indMe2)){
       } else {
         Nmatrix <- Nmatrix+1  # save branch to draw [x1,t1,y1,x2,t2,y2]
@@ -253,7 +264,7 @@ for (ii in 1:length(indLast)){# for every cell with index in indLast
         matrix_to_draw[Nmatrix,6] <- fileMe2XY[indMe2,2]
       }
       } else {
-      Nmatrix <- Nmatrix+1# save branch to draw [x1,t1,y1,x2,t2,y2]
+      Nmatrix <- Nmatrix+1  # save branch to draw [x1,t1,y1,x2,t2,y2]
       matrix_to_draw[Nmatrix,1] <- fileMe2XY[indMe2,1]
       matrix_to_draw[Nmatrix,2] <- kk-fileStep
       matrix_to_draw[Nmatrix,3] <- fileMe2XY[indMe2,2]
@@ -274,14 +285,14 @@ for (ii in 1:Nmatrix){
   lines3d(x=c(matrix_to_draw[ii,1],matrix_to_draw[ii,4]),
           y=c(matrix_to_draw[ii,2],matrix_to_draw[ii,5])/timeStep,
           z=c(matrix_to_draw[ii,3],matrix_to_draw[ii,6]),
-          col=col[NumCol],lwd = 1.5,plot = TRUE, add = TRUE,bty="b",
+          col=col[NumCol],lwd = 3, plot = TRUE, add = TRUE,bty="b",
           xlim=c(-100,100),ylim=c(0,tmax/timeStep),zlim=c(-100,100)) }
    }  # end Nmatrix
   } # end main for
 
 bgplot3d({ plot.new(); 
-  title(main = "final 3D traces of all clones", line = 0) 
-  text(x=0.09,y=0.122,"iterations/time x 200",srt=-55,cex=1.3) })
+  title(paste0(main = 'final 3D traces of all clones'), line = 0,cex.main=2.5) 
+  text(x=0.2,y=0.122,"iterations/time x 200",srt=-41,cex=3) })
 
 if (toPrint==1){
   rgl.snapshot(paste0(pathFigs,'/tree_clones_combined','.png'), fmt = "png", top = TRUE)}
