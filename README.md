@@ -10,6 +10,7 @@ MATLAB software (the R2020b version on a Mac computer was used for all testing)
 
 R language (the R version 4.1.1 on a Mac computer (macOS Big Sur) was used for all testing)
 
+Python (version 3.10 on a Mac computer was used for testing)
 
 **Installing**
 
@@ -20,6 +21,11 @@ R: the required libraries are readr, rapportools, and rgl.
         install.packages (“rapportools”)
         install.packages (“rgl”)
         
+Python: It requires the following libraries:
+         Numpy
+         Scipy
+         Matplotlib
+
 **Executing the program**
 
 Matlab: 
@@ -35,10 +41,10 @@ R:
 
 **File manifest**
 The following set of functions are available, and explained in detail in the quick guide to LinG3D routines.
-i)	linG3DAliveAll.m
-ii)	linG3DAliveClone.m
-iii)	linG3DAll.m
-iv)	linG3DClone.m
+i)	linG3DAliveAll
+ii)	linG3DAliveClone
+iii)	linG3DAll
+iv)	linG3DClone
 
 **Authors**
 Anjun Hu,
