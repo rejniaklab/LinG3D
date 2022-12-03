@@ -72,7 +72,7 @@ function linG3DClone
  
  % load cell history file
  hist=load([pathdata,dataDirectory,'cell_history.txt']); 
-   % [cell ID, clone ID, birth iter, mother ID, div/death iter]
+   % [cell ID, clone ID, mother ID, birth iter, div/death iter]
  
 
  disp(['clone=',num2str(cloneNum)]);

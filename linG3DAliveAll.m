@@ -64,7 +64,7 @@ function linG3DAliveAll
 
  % load cell history file
  hist=load([pathdata,dataDirectory,'cell_history.txt']); 
-    % [cell ID, clone ID, birth iter, mother ID, div/death iter]
+    % [cell ID, clone ID, mother ID, birth iter, div/death iter]
 
  % load indices of all survived cells
  cellID=load([pathdata,dataDirectory,'cellID_',num2str(tmax),'.txt']);

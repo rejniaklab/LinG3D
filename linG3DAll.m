@@ -63,7 +63,7 @@ function linG3DAll
  
  % load cell history file
  hist=load([pathdata,dataDirectory,'cell_history.txt']); 
-   % [cell ID, clone ID, birth iter, mother ID, div/death iter]
+   % [cell ID, clone ID, mother ID, birth iter, div/death iter]
  
      
  for cloneNum=0:NumberClones
