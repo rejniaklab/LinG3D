@@ -1,17 +1,13 @@
-
 """
 This is a companion code for the paper  
 "LinG3D: Visualizing the Spatio-Temporal Dynamics of Clonal Evolution" 
 A. Hu, A.M.E. Ojwang', K.D. Olumoyin, and K.A. Rejniak
 
-This code generates the 3D lineage tree of one clone of number
-specified in 'cloneNum' taking into account only the cells that
-survived to the end of simulation. It uses data from directory
- 'pathdata'. 
+This code generates the 3D lineage tree of all clones
 
 The following parameters needs to be specified:  
   pathdata -- directory with input data  
-  CloneNum  -- clone number to be drawn  
+  NumberClones -- total number of clones in the data  
   
 It requires the following data in the pathdata/data/ directory:  
   cell_history.txt -- file with info about each cell  
@@ -26,8 +22,8 @@ specified for a given project:
   fileStep            -- frequency of the sampled data
 
 for the examples discussed in the paper use:  
- example 1: pathdata='exampleB05';  cloneNum between 0 and 9
- example 2: pathdata='exampleB005'; cloneNum between 0 and 147 
+example 1: pathdata='exampleB05';  NumberClones=9  
+example 2: pathdata='exampleB005'; NumberClones=147  
 
 October 31, 2022
 """
@@ -40,7 +36,6 @@ import matplotlib as mpl
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from mpl_toolkits import mplot3d # to make interactive 3d plots
 import os
-from os import path
 
 # define a MATLAB-like patch function
 
@@ -101,7 +96,6 @@ def DrawBackground(drug,tmax,timeStep,xmin,xmax,ymin,ymax):
                 cc=[ymin+(jj-1)*hgy, ymin+(jj-1)*hgy, ymin+jj*hgy, ymin+jj*hgy, ymin+(jj-1)*hgy]
                 patch_r(ax, aa, bb, cc)
 
-
 def DefineColorPalette():
     col = np.array([[255,0,255],[255,0,0],[0,255,255],[0,0,255],[0,255,0],[0,0,0],[255,191,0],\
                     [255,255,0],[191,255,0],[128,128,0],[255,182,193],[0,191,255],[0,128,255],\
@@ -122,21 +116,19 @@ def DefineColorPalette():
                     [178,34,34],[221,160,221],[255,235,205]])/255
     return col
 
-
 def find(condition):
     res, = np.nonzero(np.ravel(condition))
     return res
 
-
 fig = plt.figure()
 ax = plt.axes(projection='3d')
 
-def linG3DAliveClone():
-    pathdata='exampleB005'
-    cloneNum=5
+def linG3DAll():
+##    pathdata = 'exampleB005'
+##    NumberClones = 9
     
-##    pathdata='exampleB05'
-##    cloneNum=25
+    pathdata = 'exampleB05'
+    NumberClones = 147
     
     toPrint=1                # save the final figure
     IsGradient = 1           # draw drug gradient in the background 1-yes; 0-no;
@@ -155,14 +147,7 @@ def linG3DAliveClone():
     
     col=DefineColorPalette()
     Ncol=col[:,0].shape[0]
-
-    if toPrint==1:
-        pathFigs=pathdata+'/fig_clonesAlive';
-        if path.exists(pathFigs):
-            pass
-        else:
-            os.mkdir(pathFigs)
-    
+        
     # draw background with drug gradient
     if IsGradient == 1:
         drug = np.loadtxt(pathdata + dataDirectory + 'drug.txt')
@@ -171,124 +156,117 @@ def linG3DAliveClone():
     # load cell history file
     hist = np.loadtxt(pathdata + dataDirectory + 'cell_history.txt')
     # [cell ID, clone ID, mother ID, birth iter, div / death iter]
-    
-    # load indices of all survived cells
-    cellID = np.loadtxt(pathdata + dataDirectory + 'cellID_' + str(tmax) + '.txt')
-    # print(cellID.shape)  
-    
-    print('clone=' + str(cloneNum))
-    
-    # identify all survived cells from a given clone
-    indLast = []
-    Nlast = 0
-    
-    for ii in range(len(cellID)):  # all cells in the last file
-        if hist[int(cellID[ii])-1,1] == cloneNum:
-            indLast.append(cellID[ii])
-            Nlast += 1
-    Numlast = Nlast
-    for ii in range(Numlast):
-            
-        moNum = hist[int(indLast[ii])-1,2]
-        while moNum > 0 and (hist[int(moNum)-1,1] == cloneNum):  # all predecesor cells
-            indLast.append(moNum)
-            Nlast += 1
-            moNum = hist[int(moNum)-1,2]
-    indLast = np.unique(indLast)  # remove repeated cells
-    # print(indLast)
+
+    for cloneNum in range(NumberClones + 1):
+        print('clone=' + str(cloneNum) + ' of ' + str(NumberClones))
         
-    # define matrix of line segments (3D branches) to draw
-    matrix_to_draw = np.zeros((1, 6))  # [x1, t1, y1, x2, t2, y2] X - time - Y axes
-    Nmatrix = 0
+        # define matrix of line segments (3D branches) to draw
+        matrix_to_draw = np.zeros((1, 6))  # [x1, k1, y1, x2, k2, y2]
+        Nmatrix = 0
         
-    for ii in range(len(indLast)):  # for every cell with index in indLast
-        if ii % 100 == 0:
-            print('... calculating')
+        indLast = find(hist[:,1]==cloneNum)
+        indLast = np.array(indLast)
+        # print(indLast)
+        
+        for ii in range(len(indLast)):  # for every cell with index in indLast
+            if ii % 100 == 0:
+                print('... calculating')
                 
-        cellNum = hist[int(indLast[ii])-1,0]  # cell ID
-        # print(cellNum)
-        mothNum = hist[int(indLast[ii])-1,2]  # mother ID
-        strtNum = hist[int(indLast[ii])-1,3]  # cell birth
-        endNum = hist[int(indLast[ii])-1,4]
-        endNum = max(tmax, min(endNum, tmax)) # cell div / death / tmax
+            cellNum = int(hist[indLast[ii],0])  # cell ID
+            # print(cellNum)
+            mothNum = int(hist[indLast[ii],2])  # mother ID
+            strtNum = int(hist[indLast[ii],3])  # cell birth
+            endNum = int(hist[indLast[ii],4])
+            endNum = max(tmax, min(endNum, tmax)) # cell div / death / tmax
             
-        # find all appearances of the cellNum
-        kkStart = fileStep * np.floor(strtNum / fileStep)  # initial file number
-        kkEnd = fileStep * np.floor(endNum / fileStep)  # final file number
-        kkStart = int(kkStart)
-        kkEnd = int(kkEnd)
-        # print(kkStart)
+            # find all appearances of the cellNum
+            kkStart = fileStep * np.floor(strtNum / fileStep)  # initial file number
+            kkEnd = fileStep * np.floor(endNum / fileStep)  # final file number
+            kkStart = int(kkStart)
+            kkEnd = int(kkEnd)
+            # print(kkStart)
             
-        for kk in range(kkEnd, kkStart, - fileStep):  # inspect all files
-            # cell ID and cell XY from the first file
-            fileMeID = np.loadtxt(pathdata + dataDirectory + 'cellID_' + str(kk) + '.txt')  
-            fileMeXY = np.loadtxt(pathdata + dataDirectory + 'cellXY_' + str(kk) + '.txt')
+            for kk in range(kkEnd, kkStart, - fileStep):  # inspect all files
+                # cell ID and cell XY from the first file
+                fileMeID = np.loadtxt(pathdata + dataDirectory + 'cellID_' + str(kk) + '.txt')  
+                fileMeXY = np.loadtxt(pathdata + dataDirectory + 'cellXY_' + str(kk) + '.txt')
                 
-            indMe = find(fileMeID == cellNum) # find current indices of cellID
-            # print(indMe)
+                indMe = find(fileMeID == cellNum) # find current indices of cellID
+                # print(indMe)
                 
-            fileMe2ID = np.loadtxt(pathdata + dataDirectory + 'cellID_' + str(kk - fileStep) + '.txt')
-            fileMe2XY = np.loadtxt(pathdata + dataDirectory + 'cellXY_' + str(kk - fileStep) + '.txt')
+                fileMe2ID = np.loadtxt(pathdata + dataDirectory + 'cellID_' + str(kk - fileStep) + '.txt')
+                fileMe2XY = np.loadtxt(pathdata + dataDirectory + 'cellXY_' + str(kk - fileStep) + '.txt')
                 
-            indMe2 = find(fileMe2ID == cellNum)  # find current indices of cellID
-            # print(indMe2)
-                
-            if indMe.size == 0:
-                pass
-            elif indMe2.size == 0:
-                # print(indMe)                  
-                while kkStart < hist[int(mothNum)-1,3]:  # find file with the grand-mother cell
-                    mothNum = hist[int(mothNum)-1,2]
-                fileMe2ID = np.loadtxt(pathdata + dataDirectory + 'cellID_' + str(kkStart) + '.txt')
-                fileMe2XY = np.loadtxt(pathdata + dataDirectory + 'cellXY_' + str(kkStart) + '.txt')
-                    
-                indMe2 = find(fileMe2ID == mothNum)  # find current indices of mother cellID
+                indMe2 = find(fileMe2ID == cellNum)  # find current indices of cellID
                 # print(indMe2)
-                if indMe2.size == 0:
+                
+                if indMe.size == 0:
                     pass
+                elif indMe2.size == 0:
+                    # print(indMe)                  
+                    while kkStart < int(hist[mothNum-1,3]):  # find file with the grand-mother cell
+                        mothNum = int(hist[mothNum-1,2])
+                    fileMe2ID = np.loadtxt(pathdata + dataDirectory + 'cellID_' + str(kkStart) + '.txt')
+                    fileMe2XY = np.loadtxt(pathdata + dataDirectory + 'cellXY_' + str(kkStart) + '.txt')
+                    
+                    indMe2 = find(fileMe2ID == mothNum)  # find current indices of mother cellID
+                    # print(indMe2)
+                    if indMe2.size == 0:
+                        pass
+                    else:                     
+                        matrix_to_draw = np.row_stack((matrix_to_draw, np.zeros((1, 6))))                       
+                        tmp = np.array([0.0,0.0])
+                        tmp2 = []
+                        if fileMe2XY[indMe2][0].any() == 0:
+                            tmp2.append(tmp)
+                        else:
+                            tmp2.append(fileMe2XY[indMe2][0])
+                        
+                        # print(tmp2)
+                        # print(tmp2[0][1])
+                        matrix_to_draw[Nmatrix,:] = [fileMeXY[indMe][0][0], kkStart + fileStep,\
+                                                    fileMeXY[indMe][0][1], tmp2[0][0],\
+                                                    kkStart, tmp2[0][1]]
+                        Nmatrix += 1  # save branch to draw [x1,t1,y1,x2,t2,y2]   
+                        
+                            
                 else:
-                    matrix_to_draw = np.row_stack((matrix_to_draw, np.zeros((1, 6))))
-                    matrix_to_draw[Nmatrix, :] = [fileMeXY[indMe][0][0], kkStart + fileStep,
-                                                fileMeXY[indMe][0][1], fileMe2XY[indMe2][0][0],
-                                                kkStart, fileMe2XY[indMe2][0][1]]
+                    matrix_to_draw = np.row_stack((matrix_to_draw, np.zeros((1, 6))))                   
+                    tmp = np.array([0.0,0.0])
+                    tmp2 = []
+                    if fileMe2XY[indMe2][0].any() == 0:
+                        tmp2.append(tmp)
+                    else:
+                        tmp2.append(fileMe2XY[indMe2][0])
+                        
+                    matrix_to_draw[Nmatrix,:] = [tmp2[0][0], kk - fileStep,\
+                                                tmp2[0][1], fileMeXY[indMe][0][0],\
+                                                kk, fileMeXY[indMe][0][1]]
                     Nmatrix += 1  # save branch to draw [x1,t1,y1,x2,t2,y2]
-            else:
-                matrix_to_draw = np.row_stack((matrix_to_draw, np.zeros((1, 6))))
-                matrix_to_draw[Nmatrix, :] = [fileMe2XY[indMe2][0][0], kk - fileStep,
-                                                  fileMe2XY[indMe2][0][1], fileMeXY[indMe][0][0],
-                                                  kk, fileMeXY[indMe][0][1]]
-                Nmatrix += 1  # save branch to draw [x1,t1,y1,x2,t2,y2]
 
-
-    
-    # drawing clones
-    NumCol = cloneNum % Ncol  # clone color
-    # plt.title('survived cells from clone=' + str(cloneNum))
-    plt.ylabel('iterations/time x ' + str(timeStep),fontsize=8)
-
-    for ii in range(Nmatrix):
-        x = [matrix_to_draw[ii,0], matrix_to_draw[ii,3]]
-        y = [matrix_to_draw[ii,1], matrix_to_draw[ii,4]]
-        y = [yi / timeStep for yi in y]
-        z = [matrix_to_draw[ii,2], matrix_to_draw[ii,5]]
-        ax.plot(x, y, z, c=col[NumCol,:3],linewidth=1.3)
-    ax.view_init(37.5,-130)
-    ax.set_box_aspect([1,2.5,1])
-    ax.set_xticks([-100,-50,0,50,100])
-    ax.set_yticks([500,450,400,350,300,250,200,150,100,50,0])
-    ax.set_zticks([-100,-50,0,50,100])
-    ax.set_ylim(0,500)
+        # drawing clones
+        NumCol = cloneNum % Ncol  # clone color
+        # plt.title('clone=' + str(cloneNum))
+        plt.ylabel('iterations/time x ' + str(timeStep))
         
+        for ii in range(Nmatrix):
+            x = [matrix_to_draw[ii][0], matrix_to_draw[ii][3]]
+            y = [matrix_to_draw[ii][1], matrix_to_draw[ii][4]]
+            y = [yi / timeStep for yi in y]
+            z = [matrix_to_draw[ii][2], matrix_to_draw[ii][5]]
+            ax.plot(x, y, z, c=col[NumCol,:3],linewidth=1.2)
+        ax.view_init(40,-130)
+        ax.set_box_aspect([1,2.5,1])
+        ax.set_xticks([-100,-50,0,50,100])
+        ax.set_yticks([500,450,400,350,300,250,200,150,100,50,0])
+        ax.set_zticks([-100,-50,0,50,100])
+        ax.set_ylim(0,500)
+        
+    # plt.title('final 3D traces of all clones')   
     if toPrint==1:
-        plt.savefig(pathFigs + "/tree_alive_clone_"+ str(cloneNum)+'.jpg', dpi=300)
+        plt.savefig(pathdata + "/tree_clone_combined.jpg", dpi=300)
     
     plt.show()
     
 if __name__ == '__main__':
-    linG3DAliveClone()               
-    
-
-
-
-
-           
+    linG3DAll()        

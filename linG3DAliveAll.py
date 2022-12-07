@@ -156,7 +156,7 @@ def linG3DAliveAll():
 
     # load cell history file
     hist = np.loadtxt(pathdata + dataDirectory + 'cell_history.txt')
-    # [cell ID, clone ID, birth iter, mother ID, div / death iter]
+    # [cell ID, clone ID, mother ID, birth iter, div / death iter]
 
     # load indices of all survived cells
     cellID = np.loadtxt(pathdata + dataDirectory + 'cellID_' + str(tmax) + '.txt')

@@ -165,7 +165,7 @@ def linG3DClone():
         
     # load cell history file
     hist = np.loadtxt(pathdata + dataDirectory + 'cell_history.txt')
-    # [cell ID, clone ID, birth iter, mother ID, div / death iter]
+    # [cell ID, clone ID, mother ID, birth iter, div / death iter]
     
     print('clone=' + str(cloneNum))
     
