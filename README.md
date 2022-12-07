@@ -10,7 +10,7 @@ MATLAB software (the R2020b version on a Mac computer was used for all testing)
 
 R language (the R version 4.1.1 on a Mac computer (macOS Big Sur) was used for all testing)
 
-Python (version 3.10 on a Mac computer was used for testing)
+Python (version 3.10.6 on a Mac computer was used for testing)
 
 **Installing**
 
@@ -44,6 +44,20 @@ R:
              source("~/Desktop/your_folder/linG3DClone.r")
 3.	Run the function. For example, to run linG3DClone.r type on the console,
                           linG3DClone()
+                          
+Python:
+       You can run the .py scripts from the terminal
+       
+       Terminal> python3 linG3DAliveAll.py
+       
+       Terminal> python3 linG3DAliveClone.py
+       
+       Terminal> python3 linG3DAll.py
+       
+       Terminal> python3 linG3DClone.py
+     
+       The codes are also available as Jupyter notebooks
+
 
 **File manifest**
 The following set of functions are available, and explained in detail in the quick guide to LinG3D routines.
