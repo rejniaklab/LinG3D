@@ -30,26 +30,19 @@ library(rapportools)  # for is.empty
 library(rgl) # for 3D
 
 options(scipen = 999)  # disables printing in scientific notation 
-# pathdata='exampleB005';
-# NumberClones=9;
+pathdata='exampleB005';
+NumberClones=9;
 # pathdata='exampleB05';
 # NumberClones=147;
-pathdata='exampleExp';
-NumberClones=10;
 
 toPrint <- 1 # save the final figure
 IsGradient <- 0 # draw drug gradient in the background 1-yes; 0-no;
 dataDirectory <- '/data/'# directory with cell and drug data
-# xmin <- -100; xmax <- 100; ymin <- xmin; ymax <- xmax # 2D domain boundaries
-# tmin <- 0; tmax <- 100000 # time/iteration boundaries
-# timeStep <- (tmax-tmin)/(2.5*(xmax-xmin))
-# fileStep <- 2000 # frequency of data 
-stepDraw <- 4
-
-xmin <- 0; xmax <- 1500; ymin <- xmin; ymax <- 1000 # 2D domain boundaries
-tmin <- 0; tmax <- 864 # time/iteration boundaries
+xmin <- -100; xmax <- 100; ymin <- xmin; ymax <- xmax # 2D domain boundaries
+tmin <- 0; tmax <- 100000 # time/iteration boundaries
 timeStep <- (tmax-tmin)/(2.5*(xmax-xmin))
-fileStep <- 4 # frequency of data 
+fileStep <- 2000 # frequency of data 
+stepDraw <- 200
 
 if (toPrint==1){
   pathFigs <- paste0(pathdata,'/fig_clones')
@@ -61,13 +54,13 @@ if (toPrint==1){
 open3d()
 axes3d()
 view3d()
-add_axes <- function(x, y, z, axis.col = NA) {   
-  minnum <- function(k){c(-max(abs(k)), max(abs(k))) * 1.05}  
-  xminnum <- minnum(x);  zminnum <- minnum(z); 
-  rgl.lines(xminnum, c(0, 0), c(0, 0), color = NA)
-  rgl.lines(c(0, 0), y, c(0, 0), color = NA)
-  rgl.lines(c(0, 0), c(0, 0), zminnum, color = NA) } # needed to properly position the 3D
-add_axes(c(xmin,xmax),c(0,tmax/timeStep),c(ymin,ymax))  # set the axes
+rgl_add_axes <- function(x, y, z, axis.col = NA) {   
+  lim <- function(k){c(-max(abs(k)), max(abs(k))) * 1.05}  
+  xlim <- lim(x); ylim <- y; zlim <- lim(z); 
+  rgl.lines(xlim, c(0, 0), c(0, 0), color = NA)
+  rgl.lines(c(0, 0), ylim, c(0, 0), color = NA)
+  rgl.lines(c(0, 0), c(0, 0), zlim, color = NA) } # needed to properly position the 3D
+rgl_add_axes(c(xmin,xmax),c(0,tmax/timeStep),c(ymin,ymax))  # set the axes
 aspect3d(1, 2, 1)  # required aspect ratio x=1, y=2, z=1
 grid3d(c("x+-","y+","z-"), col = "#DCDCDC", n = 6)  # set grid on the visible axes only
 goodview <- matrix(c(0.6949471,-0.7133674,0.09030721,0,
@@ -133,7 +126,7 @@ DrawBackground <- function(drug,tmax,timeStep,xmin,xmax,ymin,ymax){
       }
     }
   }
-}# if gradient
+} 
 
 # draw background with drug gradient
 if (IsGradient==1){
@@ -145,9 +138,8 @@ if (IsGradient==1){
 
 # load cell history file
 hist <- read.table(paste0(pathdata,dataDirectory,'cell_history.txt'),header = F)
-# [cell ID, clone ID, mother ID, birth iter, div/death iter]
 
-for (cloneNum in 1:NumberClones) {
+for (cloneNum in 0:NumberClones) {
 print(paste0('clone = ',cloneNum,' of ',NumberClones))
 
 indLast=which(hist[,2]==cloneNum)  
@@ -171,7 +163,6 @@ for (ii in 1:length(indLast)){# for every cell with index in indLast
   while (i>=(kkStart+fileStep)) { vec[j] <- i; i <- i-fileStep; j <- j+1;}
   
   for (kk in vec) {
-    #for (kk in kkEnd:-fileStep:kkStart+fileStep){# inspect all files
     # cell ID and cell XY from the first file
     fileMeID  <- as.matrix(read.table(paste0(pathdata,dataDirectory,'cellID_',kk,'.txt'),header = F),dimnames=NULL)
     colnames(fileMeID) <- NULL;
@@ -210,7 +201,7 @@ for (ii in 1:length(indLast)){# for every cell with index in indLast
 if (Nmatrix>0) {  # needed to handle empty clones
 
 # define matrix of line segments (3D branches) to draw
-matrix_to_draw <- matrix(rep(0,Nmatrix*6), nrow = Nmatrix,ncol = 6)# [x1,k1,y1,x2,k2,y2]
+matrix_to_draw <- matrix(rep(0,Nmatrix*6), nrow = Nmatrix,ncol = 6) # [x1,k1,y1,x2,k2,y2]
 Nmatrix <- 0
 
 for (ii in 1:length(indLast)){# for every cell with index in indLast
