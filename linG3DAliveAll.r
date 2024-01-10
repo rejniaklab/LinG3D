@@ -1,15 +1,17 @@
-linG3DAliveAll <- function(){
+linG3DAliveAll <- function(pathData, numClones, IsGradient,
+                           xmin, xmax, ymin, ymax,
+                           tmin, tmax, fileStep, toPrint) {
 ######################################################################
 ## This is a companion code for the paper "LinG3D: Visualizing the  ##
 ## Spatio-Temporal Dynamics of Clonal Evolution" by A. Hu, A.M.E.   ##
-## Ojwang', K.D. Olumoyin, and K.A. Rejniak !                       ##
+## Ojwang", K.D. Olumoyin, and K.A. Rejniak                         ##
 ## This code generates the 3D lineage tree of all clones including  ##
 ## only those cells that survived to the end of simulation.         ##
 ##                                                                  ##
 ## The following parameters need to be specified:                   ##
-##   pathdata     -- directory with input data                      ##
-##   NumberClones -- total number of clones in the data             ##
-## It requires the following data in the pathdata/data/ directory:  ##
+##   pathData     -- directory with input data                      ##
+##   numClones -- total number of clones in the data             ##
+## It requires the following data in the pathData/data/ directory:  ##
 ##   cell_history.txt -- file with info about each cell             ##
 ##   cellID_##.txt    -- cell IDs in a file with index number ##    ## 
 ##   cellXY_##.txt    -- cell coordinates in a file with index ##   ##
@@ -20,8 +22,8 @@ linG3DAliveAll <- function(){
 ##   tmin, tmax          -- dimensions of the temporal domain       ##
 ##   fileStep            -- frequency of the sampled data           ## 
 ## for the examples discussed in the paper use:                     ##
-##   example 1: pathdata='exampleB05';  NumberClones=9;             ##
-##   example 2: pathdata='exampleB005'; NumberClones=147;           ##
+##   example 1: pathData="exampleB05";  numClones=9;             ##
+##   example 2: pathData="exampleB005"; numClones=147;           ##
 ##                                                                  ##
 ## October 31, 2022                                                 ##
 ######################################################################
@@ -30,27 +32,28 @@ library(readr)  # to read text files
 library(rapportools)  # for is.empty
 library(rgl) # for 3D 
 
-
 options(scipen = 999)  
-# pathdata='exampleB005';
-# NumberClones=9;
-pathdata='exampleB05';
-NumberClones=147
 
-toPrint <- 1  # save the final figure
-IsGradient <- 1  # draw drug gradient in the background 1-yes; 0-no;
-dataDirectory <- '/data/'# directory with cell and drug data
-xmin <- -100; xmax <- 100; ymin <- xmin; ymax <- xmax  # 2D domain boundaries
-tmin <- 0; tmax <- 100000  # time/iteration boundaries
+#---------------------------parameters---------------------------------#
+
+# parameters
+pathData <- pathData  # exampleB05 or exampleB005
+numClones=numClones;
+toPrint <- toPrint  # save the final figure 1-yes; 0-no;
+IsGradient <- IsGradient  # draw drug gradient in the background 1-yes; 0-no;
+xmin <- xmin; xmax <- xmax; ymin <- ymin; ymax <- ymax  # 2D domain boundaries
+tmin <- tmin; tmax <- tmax  # time/iteration boundaries
 timeStep <- (tmax-tmin)/(2.5*(xmax-xmin))
-fileStep <- 2000  # frequency of data
+fileStep <- fileStep # frequency of data
+
+# directory with cell and drug data
+dataDirectory <- "/data/"
 
 if (toPrint==1){
-  pathFigs <- paste0(pathdata,'/fig_clonesAlive')
+  pathFigs <- paste0(pathData,"/fig_clonesAlive")
   dir.create(pathFigs)
 }
 
-################################################################################
 #--------------------prepare 3d view using rgl---------------------------------#
 
 open3d()
@@ -72,8 +75,7 @@ goodview <- matrix(c(0.6949471,-0.7133674,0.09030721,0,
 highlevel()
 par3d(windowRect = c(0,0, 1200, 1200), userMatrix = goodview, zoom=0.75, cex=2)  # set final view
 
-
-##############################################################################
+#-----------------------prepare 3d view using rgl---------------------------------#
 
 col <- c("#FF00FF","#FF0000","#00FFFF","#0000FF","#00FF00","#000000","#FFBF00",
          "#FFFF00","#BFFF00","#808000","#FFB6C1","#00BFFF","#0080FF","#FAEBD7",
@@ -91,7 +93,7 @@ col <- c("#FF00FF","#FF0000","#00FFFF","#0000FF","#00FF00","#000000","#FFBF00",
          "#DDA0DD","#FFEBCD"	) #}
 Ncol <- length(col)
 
-##############################################################################
+#--------------------------draw background function------------------------------------------#
 
 DrawBackground <- function(drug,tmax,timeStep,xmin,xmax,ymin,ymax){
   
@@ -106,7 +108,7 @@ DrawBackground <- function(drug,tmax,timeStep,xmin,xmax,ymin,ymax){
         polygon3d(x=c(xmin+(ii-1)*hgx,xmin+ii*hgx,xmin+ii*hgx,xmin+(ii-1)*hgx,xmin+(ii-1)*hgx),
                   y=c(kk,kk,kk,kk,kk),
                   z=c(ymin+(jj-1)*hgy,ymin+(jj-1)*hgy,ymin+jj*hgy,ymin+jj*hgy,ymin+(jj-1)*hgy),
-                  col = 'blue',fill=TRUE,add = TRUE,plot = TRUE,coords = c(x=1,z=3),alpha=0.25)
+                  col = "blue",fill=TRUE,add = TRUE,plot = TRUE,coords = c(x=1,z=3),alpha=0.25)
         
       } else if ((drug[ii,jj]>=drugmin+drugstep)&&(drug[ii,jj]<drugmin+2*drugstep)) {
         polygon3d(x=c(xmin+(ii-1)*hgx,xmin+ii*hgx,xmin+ii*hgx,xmin+(ii-1)*hgx,xmin+(ii-1)*hgx),
@@ -128,26 +130,27 @@ DrawBackground <- function(drug,tmax,timeStep,xmin,xmax,ymin,ymax){
       }
     }
   }
-}# if gradient
+}
 
 # draw background with drug gradient
 if (IsGradient==1){
-  drug <- read.table(paste0(pathdata,dataDirectory,'drug.txt'),header = F)
+  drug <- read.table(paste0(pathData,dataDirectory,"drug.txt"),header = F)
   DrawBackground(drug,tmax,timeStep,xmin,xmax,ymin,ymax)
 }
-#################################################################################
+
+#--------------------------draw trees------------------------------------------#
 
 # load cell history file
-hist <- read.table(paste0(pathdata,dataDirectory,'cell_history.txt'),header = F)
+hist <- read.table(paste0(pathData,dataDirectory,"cell_history.txt"),header = F)
 # [cell ID, clone ID, mother ID, birth iter, div/death iter]
 
 # load indices of all survived cells
-cellID <- as.matrix(read.table(paste0(pathdata,dataDirectory,'cellID_',tmax,'.txt'),header = F))
+cellID <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",tmax,".txt"),header = F))
 
 # identify all survived cells for a given clone
-for (cloneNum in 0:NumberClones) {
+for (cloneNum in 0:numClones) {
   
-print(paste0('clone = ',cloneNum, ' of ',NumberClones))
+print(paste0("clone = ",cloneNum, " of ",numClones))
 
 # identify all survived cells from a given clone
 indLast <- c(); Nlast <- 0
@@ -174,13 +177,13 @@ indLast <- unique(indLast)  # remove repeated cells
 Nmatrix <- 0
 # run to find Nmatrix
 for (ii in 1:length(indLast)) { # for every cell with index in indLast
-  if (ii%%100==0) { print('... calculating'); }
+  if (ii%%100==0) { print("... calculating"); }
   
-  cellNum <- hist[indLast[ii],1]# cell ID
-  mothNum <- hist[indLast[ii],3]# mother ID
-  strtNum <- hist[indLast[ii],4]# cell birth
+  cellNum <- hist[indLast[ii],1]  # cell ID
+  mothNum <- hist[indLast[ii],3]  # mother ID
+  strtNum <- hist[indLast[ii],4]  # cell birth
   Num  <- hist[indLast[ii],5]
-  Num <- max(tmax,min(Num,tmax))# cell div/death/tmax
+  Num <- max(tmax,min(Num,tmax))  # cell div/death/tmax
   
   # find all appearances of the cellNum
   kkStart <- fileStep*floor(strtNum/fileStep)  # initial file number
@@ -190,37 +193,35 @@ for (ii in 1:length(indLast)) { # for every cell with index in indLast
   while (i>=(kkStart+fileStep)) { vec[j] <- i; i <- i-fileStep; j <- j+1;}
   
   for (kk in vec) {
-    #for (kk in kkEnd:-fileStep:kkStart+fileStep){# inspect all files
-    # cell ID and cell XY from the first file
-    fileMeID  <- as.matrix(read.table(paste0(pathdata,dataDirectory,'cellID_',kk,'.txt'),header = F),dimnames=NULL)
+    fileMeID  <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kk,".txt"),header = F),dimnames=NULL)
     colnames(fileMeID) <- NULL;
-    fileMeXY  <- as.matrix(read.table(paste0(pathdata,dataDirectory,'cellXY_',kk,'.txt'),header = F),dimnames=NULL)
+    fileMeXY  <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kk,".txt"),header = F),dimnames=NULL)
     colnames(fileMeXY) <- NULL;
     indMe = which(fileMeID==cellNum)  # which current indices of cellID
     # cell ID and cell XY from the second file
-    fileMe2ID <- as.matrix(read.table(paste0(pathdata,dataDirectory,'cellID_',kk-fileStep,'.txt'),header = F),dimnames=NULL)
+    fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kk-fileStep,".txt"),header = F),dimnames=NULL)
     colnames(fileMe2ID) <- NULL;
-    fileMe2XY <- as.matrix(read.table(paste0(pathdata,dataDirectory,'cellXY_',kk-fileStep,'.txt'),header = F),dimnames=NULL)
+    fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kk-fileStep,".txt"),header = F),dimnames=NULL)
     colnames(fileMe2XY) <- NULL;
     indMe2 = which(fileMe2ID==cellNum)  # which current indices of cellID
     
     if (is.empty(indMe)){
     } else if (is.empty(indMe2)){
-      while (kkStart<hist[mothNum,4]){# find file with the grand-mother cell
+      while (kkStart<hist[mothNum,4]){  # find file with the grand-mother cell
         mothNum <- hist[mothNum,3]
       }
-      fileMe2ID <- as.matrix(read.table(paste0(pathdata,dataDirectory,'cellID_',kkStart,'.txt'),header = F),dimnames=NULL)
+      fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kkStart,".txt"),header = F),dimnames=NULL)
       colnames(fileMe2ID) <- NULL;
-      fileMe2XY <- as.matrix(read.table(paste0(pathdata,dataDirectory,'cellXY_',kkStart,'.txt'),header = F),dimnames=NULL)
+      fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kkStart,".txt"),header = F),dimnames=NULL)
       colnames(fileMe2XY) <- NULL;
-      indMe2=which(fileMe2ID==mothNum)# which current indices of mother cellID
+      indMe2=which(fileMe2ID==mothNum)  # which current indices of mother cellID
       
       if (is.empty(indMe2)){
       } else {
-        Nmatrix <- Nmatrix+1# save branch to draw [x1,t1,y1,x2,t2,y2]
+        Nmatrix <- Nmatrix+1  # save branch to draw [x1,t1,y1,x2,t2,y2]
       }
     } else {
-      Nmatrix <- Nmatrix+1# save branch to draw [x1,t1,y1,x2,t2,y2]
+      Nmatrix <- Nmatrix+1  # save branch to draw [x1,t1,y1,x2,t2,y2]
     }
   }
 }
@@ -230,7 +231,7 @@ matrix_to_draw <- matrix(rep(0,Nmatrix*6), nrow = Nmatrix,ncol = 6)# [x1,k1,y1,x
 Nmatrix <- 0
 
 for (ii in 1:length(indLast)) { # for every cell with index in indLast
-  if (ii%%100==0) { print('... calculating'); }
+  if (ii%%100==0) { print("... calculating"); }
   
   cellNum <- hist[indLast[ii],1]  # cell ID
   mothNum <- hist[indLast[ii],3]  # mother ID
@@ -247,15 +248,15 @@ for (ii in 1:length(indLast)) { # for every cell with index in indLast
   
   for (kk in vec) {
     # cell ID and cell XY from the first file
-    fileMeID  <- as.matrix(read.table(paste0(pathdata,dataDirectory,'cellID_',kk,'.txt'),header = F),dimnames=NULL)
+    fileMeID  <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kk,".txt"),header = F),dimnames=NULL)
     colnames(fileMeID) <- NULL;
-    fileMeXY  <- as.matrix(read.table(paste0(pathdata,dataDirectory,'cellXY_',kk,'.txt'),header = F),dimnames=NULL)
+    fileMeXY  <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kk,".txt"),header = F),dimnames=NULL)
     colnames(fileMeXY) <- NULL;
     indMe = which(fileMeID==cellNum)  # which current indices of cellID
     # cell ID and cell XY from the second file
-    fileMe2ID <- as.matrix(read.table(paste0(pathdata,dataDirectory,'cellID_',kk-fileStep,'.txt'),header = F),dimnames=NULL)
+    fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kk-fileStep,".txt"),header = F),dimnames=NULL)
     colnames(fileMe2ID) <- NULL;
-    fileMe2XY <- as.matrix(read.table(paste0(pathdata,dataDirectory,'cellXY_',kk-fileStep,'.txt'),header = F),dimnames=NULL)
+    fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kk-fileStep,".txt"),header = F),dimnames=NULL)
     colnames(fileMe2XY) <- NULL;
     indMe2 = which(fileMe2ID==cellNum)  # which current indices of cellID
     
@@ -264,9 +265,9 @@ for (ii in 1:length(indLast)) { # for every cell with index in indLast
       while (kkStart<hist[mothNum,4]){  # find file with the grand-mother cell
         mothNum <- hist[mothNum,3]
       }
-      fileMe2ID <- as.matrix(read.table(paste0(pathdata,dataDirectory,'cellID_',kkStart,'.txt'),header = F),dimnames=NULL)
+      fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kkStart,".txt"),header = F),dimnames=NULL)
       colnames(fileMe2ID) <- NULL;
-      fileMe2XY <- as.matrix(read.table(paste0(pathdata,dataDirectory,'cellXY_',kkStart,'.txt'),header = F),dimnames=NULL)
+      fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kkStart,".txt"),header = F),dimnames=NULL)
       colnames(fileMe2XY) <- NULL;
       indMe2=which(fileMe2ID==mothNum)  # which current indices of mother cellID
       
@@ -296,7 +297,7 @@ for (ii in 1:length(indLast)) { # for every cell with index in indLast
 NumCol <- (cloneNum%%Ncol)+1  # clone color
 
 bgplot3d({ plot.new(); 
-  title(paste0(main = 'survived cells from clone = ',cloneNum), line = 0,cex.main=2.5) 
+  title(paste0(main = "survived cells from clone = ",cloneNum), line = 0,cex.main=2.5) 
   text(x=0.2,y=0.122,"iterations/time x 200",srt=-41,cex=3) })
 
 for (ii in 1:Nmatrix){
@@ -311,11 +312,11 @@ for (ii in 1:Nmatrix){
  }  # end main for
 
 bgplot3d({ plot.new(); 
-  title(paste0(main = 'final 3D traces of survived clones = ',cloneNum), line = 0,cex.main=2.5) 
+  title(paste0(main = "final 3D traces of survived clones = ",cloneNum), line = 0,cex.main=2.5) 
   text(x=0.2,y=0.122,"iterations/time x 200",srt=-41,cex=3) })
 
 if (toPrint==1){
-  rgl.snapshot(paste0(pathFigs,'/tree_alive_combined','.png'), fmt = "png", top = TRUE)}
+  rgl.snapshot(paste0(pathFigs,"/tree_alive_combined",".png"), fmt = "png", top = TRUE)}
 }  # end function
 
 
