@@ -36,11 +36,11 @@ Python: It requires the following libraries:
          
 **Executing from R package**
 
-library(devtools)
+        library(devtools)
 
-install_github("rejniaklab/r_LinG3D")
+        install_github("rejniaklab/r_LinG3D")
 
-library(LinG3D)
+        library(LinG3D)
 
 **Executing the program**
 
