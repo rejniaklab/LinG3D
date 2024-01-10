@@ -35,8 +35,11 @@ Python: It requires the following libraries:
          Matplotlib
          
 **Executing from R package**
+
 library(devtools)
+
 install_github("rejniaklab/r_LinG3D")
+
 library(LinG3D)
 
 **Executing the program**
