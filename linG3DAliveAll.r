@@ -2,7 +2,7 @@ linG3DAliveAll <- function(){
 ######################################################################
 ## This is a companion code for the paper "LinG3D: Visualizing the  ##
 ## Spatio-Temporal Dynamics of Clonal Evolution" by A. Hu, A.M.E.   ##
-## Ojwang', K.D. Olumoyin, and K.A. Rejniak                         ##
+## Ojwang', K.D. Olumoyin, and K.A. Rejniak !                       ##
 ## This code generates the 3D lineage tree of all clones including  ##
 ## only those cells that survived to the end of simulation.         ##
 ##                                                                  ##
