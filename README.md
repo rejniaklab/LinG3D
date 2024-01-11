@@ -20,9 +20,11 @@ R: the required libraries are readr, rapportools, and rgl.
 
         install.packages("readr")   
 
-        install.packages ("rapportools")
+        install.packages("rapportools")
         
-        install.packages ("rgl")
+        install.packages("rgl")
+
+        install.packages("devtools")
         
 Python: It requires the following libraries:
 
@@ -31,6 +33,14 @@ Python: It requires the following libraries:
          Scipy
          
          Matplotlib
+         
+**Executing from R package**
+
+        library(devtools)
+
+        install_github("rejniaklab/r_LinG3D")
+
+        library(LinG3D)
 
 **Executing the program**
 
