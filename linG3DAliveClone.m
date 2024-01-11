@@ -1,4 +1,5 @@
-function linG3DAliveClone
+function linG3DAliveClone(pathData,cloneNum,IsGradient,xmin,xmax,...
+ymin,ymax,tmin,tmax,fileStep,toPrint)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% This is a companion code for the paper "LinG3D: Visualizing the  %%
 %% Spatio-Temporal Dynamics of Clonal Evolution" by A. Hu, A.M.E.   %%
@@ -6,54 +7,42 @@ function linG3DAliveClone
 %% This code generates the 3D lineage tree of one clone of number   %%
 %% specified in 'cloneNum' taking into account only the cells that  %%
 %% survived to the end of simulation. It uses data from directory   %%
-%% 'pathdata'.                                                      %%
+%% 'pathData'.                                                      %%
 %%                                                                  %%
 %% The following parameters need to be specified:                   %%
-%%   pathdata  -- directory with input data                         %%
-%%   CloneNum  -- clone number to be drawn                          %%
-%% It requires the following data in the pathdata/data/ directory:  %%
+%%   pathData  -- directory with input data                         %%
+%%   cloneNum  -- clone number to be drawn                          %%
+%%   IsGradient -- 1 to draw drug in the background, 0 not to draw  %%
+%%   xmin,xmax,ymin,ymax -- dimensions of the spacial domain        %%
+%%   tmin, tmax          -- dimensions of the temporal domain       %%
+%%   fileStep            -- frequency of the sampled data           %% 
+%%   toPrint    -- 1 to save the generated figure, 0 not to save    %% 
+%% It requires the following data in the pathData/data/ directory:  %%
 %%   cell_history.txt -- file with info about each cell             %%
 %%   cellID_##.txt    -- cell IDs in a file with index number ##    %% 
 %%   cellXY_##.txt    -- cell coordinates in a file with index ##   %%
 %%   drug.txt         -- concentration of a drug for background     %% 
-%% The following parameters are project-dependent and should be     %%
-%% specified for a given project:                                   %%
-%%   xmin,xmax,ymin,ymax -- dimensions of the spacial domain        %%
-%%   tmin, tmax          -- dimensions of the temporal domain       %%
-%%   fileStep            -- frequency of the sampled data           %% 
 %% for the examples discussed in the paper use:                     %%
-%%   example 1: pathdata='exampleB05';  cloneNum between 0 and 9    %%
-%%   example 2: pathdata='exampleB005'; cloneNum between 0 and 147  %%
+%%   example 1: pathData='exampleB05';  cloneNum between 0 and 9    %%
+%%   example 2: pathData='exampleB005'; cloneNum between 0 and 147  %%
+%%   example 3: pathData='exampleExp';  numClones=10;               %%
 %%                                                                  %%
-%% October 31, 2022                                                 %%
+%% January 10, 2024                                                 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%   % example 1
-  pathdata='exampleB005';
-  cloneNum=1;
-
-% % example 2
-%  pathdata='exampleB05';
-%  cloneNum=2;
-
-
- toPrint=1;            % save the final figure 
- IsGradient=1;         % draw drug gradient in the background 1-yes; 0-no;
- dataDirectory='/data/';  % directory with cell and drug data
   
 
- xmin=-100; xmax=100; ymin=xmin; ymax=xmax; % 2D domain boundaries
- tmin=0; tmax=100000;                       % time/iteration boundaries
- timeStep=(tmax-tmin)/(2.5*(xmax-xmin));
-
- fileStep=2000;        % frequency of data 
-
- 
+ dataDirectory='/data/';  % directory with cell and drug data
+ % create directory to save individual clone figures 
  if toPrint==1
-   pathFigs=[pathdata,'/fig_clonesAlive']; 
+   pathFigs=[pathData,'/fig_clonesAlive']; 
    if ~exist(pathFigs) mkdir(pathFigs); end
  end
 
+
+ timeStep=(tmax-tmin)/(2.5*(xmax-xmin)); %frequency of sampled temporal data
+
+ % draw 3D figure
  figure
  grid
  axis([xmin,xmax,tmin,tmax/timeStep,ymin,ymax])
@@ -64,17 +53,17 @@ function linG3DAliveClone
  
  % draw background with drug gradient
  if IsGradient==1
-   drug=load([pathdata,dataDirectory,'drug.txt']);
+   drug=load([pathData,dataDirectory,'drug.txt']);
    DrawBackground(drug,tmax,timeStep,xmin,xmax,ymin,ymax)  
  end
 
 
  % load cell history file
- hist=load([pathdata,dataDirectory,'cell_history.txt']); 
+ hist=load([pathData,dataDirectory,'cell_history.txt']); 
    % [cell ID, clone ID, mother ID, birth iter, div/death iter]
  
  % load indices of all survived cells
- cellID=load([pathdata,dataDirectory,'cellID_',num2str(tmax),'.txt']);
+ cellID=load([pathData,dataDirectory,'cellID_',num2str(tmax),'.txt']);
 
 
   disp(['clone=',num2str(cloneNum)]);
@@ -116,20 +105,20 @@ function linG3DAliveClone
     kkEnd  =fileStep*floor(endNum/fileStep);  % final file number
     for kk=kkEnd:-fileStep:kkStart+fileStep   % inspect all files
       % cell ID and cell XY from the first file    
-      fileMeID =load([pathdata,dataDirectory,'cellID_',num2str(kk),'.txt']);
-      fileMeXY =load([pathdata,dataDirectory,'cellXY_',num2str(kk),'.txt']);
+      fileMeID =load([pathData,dataDirectory,'cellID_',num2str(kk),'.txt']);
+      fileMeXY =load([pathData,dataDirectory,'cellXY_',num2str(kk),'.txt']);
       indMe =find(fileMeID==cellNum); % find current indices of cellID
       % cell ID and cell XY from the second file  
-      fileMe2ID=load([pathdata,dataDirectory,'cellID_',num2str(kk-fileStep),'.txt']);      
-      fileMe2XY=load([pathdata,dataDirectory,'cellXY_',num2str(kk-fileStep),'.txt']);
+      fileMe2ID=load([pathData,dataDirectory,'cellID_',num2str(kk-fileStep),'.txt']);      
+      fileMe2XY=load([pathData,dataDirectory,'cellXY_',num2str(kk-fileStep),'.txt']);
       indMe2=find(fileMe2ID==cellNum); % find current indices of cellID
       if isempty(indMe)
       elseif isempty(indMe2)
         while kkStart<hist(mothNum,4) % find file with the grand-mother cell
           mothNum=hist(mothNum,3);
         end
-        fileMe2ID=load([pathdata,dataDirectory,'cellID_',num2str(kkStart),'.txt']);      
-        fileMe2XY=load([pathdata,dataDirectory,'cellXY_',num2str(kkStart),'.txt']);
+        fileMe2ID=load([pathData,dataDirectory,'cellID_',num2str(kkStart),'.txt']);      
+        fileMe2XY=load([pathData,dataDirectory,'cellXY_',num2str(kkStart),'.txt']);
         indMe2=find(fileMe2ID==mothNum); % find current indices of mother cellID
         if isempty(indMe2)
         else
