@@ -26,8 +26,9 @@ linG3DAliveClone <- function(pathData, cloneNum, IsGradient,
 ## for the examples discussed in the paper use:                     ##
 ##   example 1: pathData="exampleB05";  cloneNum between 0 and 9    ##
 ##   example 2: pathData="exampleB005"; cloneNum between 0 and 147  ##
+##   example 3: pathData="exampleExp";  numClones=10;               ##
 ##                                                                  ##
-## October 31, 2022                                                 ##
+## January 11, 2024                                                 ##
 ######################################################################
   
 library(readr)  # to read text files
