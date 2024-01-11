@@ -21,17 +21,11 @@ linG3DAll <- function(pathData, numClones, IsGradient,
 ##   tmin, tmax          -- dimensions of the temporal domain      ##
 ##   fileStep            -- frequency of the sampled data          ## 
 ## for the examples discussed in the paper use:                    ##
-## EXAMPLE 1:                                                      ##
-## linG3DAll(pathData="exampleB05", numClones=9, IsGradient=1,     ##
-##           xmin=-100, xmax=100, ymin=-100, ymax=100,             ##
-##           tmin=0, tmax=100000, fileStep=2000, toPrint=0)        ##
+##   example 1: pathData="exampleB05";  numClones=9;                ##
+##   example 2: pathData="exampleB005"; numClones=147;              ##
+##   example 3: pathData="exampleExp";  numClones=10;               ##
 ##                                                                 ##
-## EXAMPLE 2:                                                      ##
-## linG3DAll(pathData="exampleB005", numClones=147, IsGradient=1,  ##
-##           xmin=-100, xmax=100, ymin=-100, ymax=100,             ##
-##           tmin=0, tmax=100000, fileStep=2000, toPrint=0)        ##
-##                                                                 ##
-## October 31, 2022                                                ##
+## January 11, 2024                                                ##
 #####################################################################
   
 library(readr)  # to read text files
