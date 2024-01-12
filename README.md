@@ -42,9 +42,7 @@ Run one of the routines listed below.
 
 R:
 
-OPTION 1 
-
-Install the LinG3D package
+OPTION 1 (Install the LinG3D package)
    
         library(devtools)  # load the devtools library
 
@@ -54,14 +52,15 @@ Install the LinG3D package
 
         linG3DClone(arguments)  # run the routine (example)
 
-OPTI0N 2
+OPTI0N 2 (Use the routines)
 
-Use the routines instead
-        1.	Download all R codes data folders to your computer
+        1.	Download all R codes and data folders to your computer.
+        
         2.	Source each function. For example, to source linG3DClone.R saved in your_folder on the desktop type on the console,
-                source("~/Desktop/your_folder/linG3DClone.R")
+                source("~/Desktop/your_folder/linG3DClone.R").
+                
         3.	Run the function. For example, to run linG3DClone.R type on the console,
-                linG3DClone(arguments)
+                linG3DClone(arguments).
                           
 Python:
        You can run the .py scripts from the terminal
