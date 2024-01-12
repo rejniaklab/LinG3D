@@ -52,7 +52,7 @@ OPTION 1 (Install the LinG3D package)
 
         linG3DClone(arguments)  # run the routine (example)
 
-OPTI0N 2 (Use the routines)
+OPTION 2 (Use the routines)
 
         1.	Download all R codes and data folders to your computer.
         
