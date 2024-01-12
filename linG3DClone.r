@@ -22,17 +22,10 @@ linG3DClone <- function(pathData, cloneNum, IsGradient,
 ##   tmin, tmax          -- dimensions of the temporal domain       ##
 ##   fileStep            -- frequency of the sampled data           ## 
 ## for the examples discussed in the paper use:                     ##
-##   EXAMPLE 1: select cloneNum between 0 and 9                     ##
-##   linG3DClone(pathData="exampleB05", cloneNum=9,  IsGradient=1,  ##
-##               xmin=-100, xmax=100, ymin=-100, ymax=100,          ##
-##               tmin=0, tmax=100000, fileStep=2000, toPrint=0)     ##
-##                                                                  ##
-##   EXAMPLE 2: select cloneNum between 0 and 147                   ##
-##   linG3DClone(pathData="exampleB005", cloneNum=0,  IsGradient=1, ##
-##               xmin=-100, xmax=100, ymin=-100, ymax=100,          ##
-##               tmin=0, tmax=100000, fileStep=2000, toPrint=0)     ##
-##                                                                  ##
-## October 31, 2022                                                 ##
+##   example 1: pathData="exampleB05";  cloneNum between 0 and 9    ##
+##   example 2: pathData="exampleB005"; cloneNum between 0 and 147  ##
+##   example 3: pathData="exampleExp";  numClones=10;               ##
+## January 11, 2024                                                 ##
 ######################################################################
 
 library(readr)  # to read text files

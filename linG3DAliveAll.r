@@ -10,7 +10,7 @@ linG3DAliveAll <- function(pathData, numClones, IsGradient,
 ##                                                                  ##
 ## The following parameters need to be specified:                   ##
 ##   pathData     -- directory with input data                      ##
-##   numClones -- total number of clones in the data             ##
+##   numClones -- total number of clones in the data                ##
 ## It requires the following data in the pathData/data/ directory:  ##
 ##   cell_history.txt -- file with info about each cell             ##
 ##   cellID_##.txt    -- cell IDs in a file with index number ##    ## 
@@ -22,9 +22,9 @@ linG3DAliveAll <- function(pathData, numClones, IsGradient,
 ##   tmin, tmax          -- dimensions of the temporal domain       ##
 ##   fileStep            -- frequency of the sampled data           ## 
 ## for the examples discussed in the paper use:                     ##
-##   example 1: pathData="exampleB05";  numClones=9;             ##
-##   example 2: pathData="exampleB005"; numClones=147;           ##
-##                                                                  ##
+##   example 1: pathData="exampleB05";  numClones=9;                ##
+##   example 2: pathData="exampleB005"; numClones=147;              ##
+##   example 3: pathData="exampleExp";  numClones=10;               ##                                                              ##
 ## October 31, 2022                                                 ##
 ######################################################################
   

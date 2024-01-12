@@ -10,13 +10,13 @@ MATLAB software (the R2020b version on a Mac computer was used for all testing)
 
 R language (the R version 4.1.1 on a Mac computer (macOS Big Sur) was used for all testing)
 
-Python (version 3.10.6 on a Mac computer was used for testing)
+Python (version >3.8 on a Mac computer was used for testing)
 
 **Installing**
 
 Matlab: this code does not need installation
 
-R: the required libraries are readr, rapportools, and rgl. 
+R: the required libraries are readr, rapportools, rgl, and devtools. 
 
         install.packages("readr")   
 
@@ -34,14 +34,6 @@ Python: It requires the following libraries:
          
          Matplotlib
          
-**Executing from R package**
-
-        library(devtools)
-
-        install_github("rejniaklab/r_LinG3D")
-
-        library(LinG3D)
-
 **Executing the program**
 
 Matlab: 
@@ -49,15 +41,34 @@ Download all MATLAB files (add all files and folders to your MATLAB path)
 Run one of the routines listed below. 
 
 R:
-1.	Download all R codes data folders to your computer
-2.	Source each function. For example, to source linG3DClone.r saved in your_folder on the desktop type on the console,
-             source("~/Desktop/your_folder/linG3DClone.r")
-3.	Run the function. For example, to run linG3DClone.r type on the console,
-                          linG3DClone()
+
+OPTION 1 (Install the LinG3D package)
+   
+        library(devtools)  # load the devtools library
+
+        install_github("rejniaklab/r_LinG3D")  # install the package from GitHub
+
+        library(LinG3D)  # load the LinG3D library
+
+        linG3DClone(arguments)  # run the routine (example)
+
+OPTION 2 (Use the routines)
+
+        1.	Download all R codes and data folders to your computer.
+        
+        2.	Source each function. For example, to source linG3DClone.R saved in your_folder on the desktop type on the console,
+                source("~/Desktop/your_folder/linG3DClone.R").
+                
+        3.	Run the function. For example, to run linG3DClone.R type on the console,
+                linG3DClone(arguments).
                           
 Python:
        You can run the .py scripts from the terminal
        
+       Terminal> git clone https://github.com/rejniaklab/LinG3D.git
+
+       Terminal> cd LinG3D
+
        Terminal> python3 linG3DAliveAll.py
        
        Terminal> python3 linG3DAliveClone.py
@@ -78,7 +89,7 @@ iv)	linG3DClone
 
 **Authors**
 Anjun Hu,
-Maureiq Ojwang’,
+Awino Maureiq E. Ojwang’,
 Kayode Olumoyin,
 Katarzyna Rejniak
 

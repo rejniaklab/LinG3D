@@ -1,37 +1,3 @@
-
-"""
-This is a companion code for the paper  
-"LinG3D: Visualizing the Spatio-Temporal Dynamics of Clonal Evolution" 
-A. Hu, A.M.E. Ojwang', K.D. Olumoyin, and K.A. Rejniak
-
-This code generates the 3D lineage tree of one clone of number
-specified in 'cloneNum' taking into account only the cells that
-survived to the end of simulation. It uses data from directory
- 'pathdata'. 
-
-The following parameters needs to be specified:  
-  pathdata -- directory with input data  
-  CloneNum  -- clone number to be drawn  
-  
-It requires the following data in the pathdata/data/ directory:  
-  cell_history.txt -- file with info about each cell  
-  cellID_##.txt    -- cell IDs in a file with index number ##  
-  cellXY_##.txt    -- cell coordinates in a file with index ##  
-  drug.txt         -- concentration of a drug for background  
-  
-The following parameters are project-dependent and should be  
-specified for a given project:  
-  xmin,xmax,ymin,ymax -- dimensions of the spacial domain  
-  tmin, tmax          -- dimensions of the temporal domain  
-  fileStep            -- frequency of the sampled data
-
-for the examples discussed in the paper use:  
- example 1: pathdata='exampleB05';  cloneNum between 0 and 9
- example 2: pathdata='exampleB005'; cloneNum between 0 and 147 
-
-October 31, 2022
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
@@ -41,6 +7,8 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from mpl_toolkits import mplot3d # to make interactive 3d plots
 import os
 from os import path
+
+#%matplotlib notebook
 
 # define a MATLAB-like patch function
 
@@ -127,26 +95,42 @@ def find(condition):
     res, = np.nonzero(np.ravel(condition))
     return res
 
-
-fig = plt.figure()
-ax = plt.axes(projection='3d')
-
-def linG3DAliveClone():
-    pathdata='exampleB005'
-    cloneNum=5
+def linG3DAliveClone(pathdata,cloneNum,IsGradient,xmin,xmax,ymin,ymax,tmin,tmax,fileStep,toPrint):
+    """
+    This is a companion code for the paper "LinG3D: Visualizing the
+    Spatio-Temporal Dynamics of Clonal Evolution" by A. Hu, A.M.E.
+    Ojwang', K.D. Olumoyin, and K.A. Rejniak
     
-##    pathdata='exampleB05'
-##    cloneNum=25
+    This code generates the 3D lineage tree of one clone of number
+    specified in 'cloneNum' taking into account only the cells that
+    survived to the end of simulation. It uses data from directory
+    'pathData'.
     
-    toPrint=1                # save the final figure
-    IsGradient = 1           # draw drug gradient in the background 1-yes; 0-no;
+    The following parameters need to be specified:
+        pathData  -- directory with input data
+        cloneNum  -- clone number to be drawn
+        IsGradient -- 1 to draw drug in the background, 0 not to draw
+        xmin,xmax,ymin,ymax -- dimensions of the spacial domain
+        tmin, tmax          -- dimensions of the temporal domain
+        fileStep            -- frequency of the sampled data
+        toPrint    -- 1 to save the generated figure, 0 not to save
+        
+    It requires the following data in the pathData/data/ directory:
+        cell_history.txt -- file with info about each cell
+        cellID_##.txt    -- cell IDs in a file with index number ##
+        cellXY_##.txt    -- cell coordinates in a file with index ##
+        drug.txt         -- concentration of a drug for background
+    
+    for the examples discussed in the paper use:
+        example 1: pathData='exampleB05';  cloneNum between 0 and 9
+        example 2: pathData='exampleB005'; cloneNum between 0 and 147
+        example 3: pathData='exampleExp';  numClones=10;
+        
+    January 10, 2024
+    """
+    
     dataDirectory = '/data/' # directory with cell and drug data
-    
-    xmin=-100; xmax=100; ymin=xmin; ymax=xmax  # 2D domain boundaries
-    tmin=0; tmax=100000                        # time/iteration boundaries
     timeStep=(tmax-tmin)/(2.5*(xmax-xmin))
-
-    fileStep = 2000       # frequency of data 
 
     plt.grid()
     ax.set_xlim([xmin, xmax])
@@ -157,7 +141,7 @@ def linG3DAliveClone():
     Ncol=col[:,0].shape[0]
 
     if toPrint==1:
-        pathFigs=pathdata+'/fig_clonesAlive';
+        pathFigs=pathData+'/fig_clonesAlive';
         if path.exists(pathFigs):
             pass
         else:
@@ -165,15 +149,15 @@ def linG3DAliveClone():
     
     # draw background with drug gradient
     if IsGradient == 1:
-        drug = np.loadtxt(pathdata + dataDirectory + 'drug.txt')
+        drug = np.loadtxt(pathData + dataDirectory + 'drug.txt')
         DrawBackground(drug, tmax, timeStep, xmin, xmax, ymin, ymax)
         
     # load cell history file
-    hist = np.loadtxt(pathdata + dataDirectory + 'cell_history.txt')
+    hist = np.loadtxt(pathData + dataDirectory + 'cell_history.txt')
     # [cell ID, clone ID, mother ID, birth iter, div / death iter]
     
     # load indices of all survived cells
-    cellID = np.loadtxt(pathdata + dataDirectory + 'cellID_' + str(tmax) + '.txt')
+    cellID = np.loadtxt(pathData + dataDirectory + 'cellID_' + str(tmax) + '.txt')
     # print(cellID.shape)  
     
     print('clone=' + str(cloneNum))
@@ -221,14 +205,14 @@ def linG3DAliveClone():
             
         for kk in range(kkEnd, kkStart, - fileStep):  # inspect all files
             # cell ID and cell XY from the first file
-            fileMeID = np.loadtxt(pathdata + dataDirectory + 'cellID_' + str(kk) + '.txt')  
-            fileMeXY = np.loadtxt(pathdata + dataDirectory + 'cellXY_' + str(kk) + '.txt')
+            fileMeID = np.loadtxt(pathData + dataDirectory + 'cellID_' + str(kk) + '.txt')  
+            fileMeXY = np.loadtxt(pathData + dataDirectory + 'cellXY_' + str(kk) + '.txt')
                 
             indMe = find(fileMeID == cellNum) # find current indices of cellID
             # print(indMe)
                 
-            fileMe2ID = np.loadtxt(pathdata + dataDirectory + 'cellID_' + str(kk - fileStep) + '.txt')
-            fileMe2XY = np.loadtxt(pathdata + dataDirectory + 'cellXY_' + str(kk - fileStep) + '.txt')
+            fileMe2ID = np.loadtxt(pathData + dataDirectory + 'cellID_' + str(kk - fileStep) + '.txt')
+            fileMe2XY = np.loadtxt(pathData + dataDirectory + 'cellXY_' + str(kk - fileStep) + '.txt')
                 
             indMe2 = find(fileMe2ID == cellNum)  # find current indices of cellID
             # print(indMe2)
@@ -239,8 +223,8 @@ def linG3DAliveClone():
                 # print(indMe)                  
                 while kkStart < hist[int(mothNum)-1,3]:  # find file with the grand-mother cell
                     mothNum = hist[int(mothNum)-1,2]
-                fileMe2ID = np.loadtxt(pathdata + dataDirectory + 'cellID_' + str(kkStart) + '.txt')
-                fileMe2XY = np.loadtxt(pathdata + dataDirectory + 'cellXY_' + str(kkStart) + '.txt')
+                fileMe2ID = np.loadtxt(pathData + dataDirectory + 'cellID_' + str(kkStart) + '.txt')
+                fileMe2XY = np.loadtxt(pathData + dataDirectory + 'cellXY_' + str(kkStart) + '.txt')
                     
                 indMe2 = find(fileMe2ID == mothNum)  # find current indices of mother cellID
                 # print(indMe2)
@@ -272,23 +256,33 @@ def linG3DAliveClone():
         y = [yi / timeStep for yi in y]
         z = [matrix_to_draw[ii,2], matrix_to_draw[ii,5]]
         ax.plot(x, y, z, c=col[NumCol,:3],linewidth=1.3)
-    ax.view_init(37.5,-130)
+    tm = tmax/timeStep
+    ax.view_init(40,-130)
     ax.set_box_aspect([1,2.5,1])
-    ax.set_xticks([-100,-50,0,50,100])
-    ax.set_yticks([500,450,400,350,300,250,200,150,100,50,0])
-    ax.set_zticks([-100,-50,0,50,100])
-    ax.set_ylim(0,500)
+    # ax.set_xticks([-xmin,-xmin*0.5,0,0.5*xmax,xmax])
+    ax.set_yticks([tm,tm-tm*.2,tm-tm*.4,tm-tm*.6,tm-tm*.8,0])
+    # ax.set_zticks([-xmin,-xmin*0.5,0,0.5*xmax,xmax])
+    ax.set_ylim(0,tm)
         
     if toPrint==1:
         plt.savefig(pathFigs + "/tree_alive_clone_"+ str(cloneNum)+'.jpg', dpi=300)
     
     plt.show()
     
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+
 if __name__ == '__main__':
-    linG3DAliveClone()               
     
-
-
+    pathData='exampleB005'
+    cloneNum=5
+    toPrint=1                # save the final figure
+    IsGradient = 1           # draw drug gradient in the background 1-yes; 0-no;
+    xmin=-100; xmax=100; ymin=xmin; ymax=xmax  # 2D domain boundaries
+    tmin=0; tmax=100000                        # time/iteration boundaries
+    fileStep = 2000       # frequency of data 
+    
+    linG3DAliveClone(pathData,cloneNum,IsGradient,xmin,xmax,ymin,ymax,tmin,tmax,fileStep,toPrint)
 
 
            
