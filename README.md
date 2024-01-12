@@ -10,7 +10,7 @@ MATLAB software (the R2020b version on a Mac computer was used for all testing)
 
 R language (the R version 4.1.1 on a Mac computer (macOS Big Sur) was used for all testing)
 
-Python (version 3.10.6 on a Mac computer was used for testing)
+Python (version >3.8 on a Mac computer was used for testing)
 
 **Installing**
 
