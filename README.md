@@ -16,7 +16,7 @@ Python (version 3.10.6 on a Mac computer was used for testing)
 
 Matlab: this code does not need installation
 
-R: the required libraries are readr, rapportools, and rgl. 
+R: the required libraries are readr, rapportools, rgl, and devtools. 
 
         install.packages("readr")   
 
@@ -34,7 +34,7 @@ Python: It requires the following libraries:
          
          Matplotlib
          
-**Executing from R package**
+**Installing the LinG3D R package**
 
         library(devtools)
 
@@ -50,10 +50,10 @@ Run one of the routines listed below.
 
 R:
 1.	Download all R codes data folders to your computer
-2.	Source each function. For example, to source linG3DClone.r saved in your_folder on the desktop type on the console,
-             source("~/Desktop/your_folder/linG3DClone.r")
-3.	Run the function. For example, to run linG3DClone.r type on the console,
-                          linG3DClone()
+2.	Source each function. For example, to source linG3DClone.R saved in your_folder on the desktop type on the console,
+             source("~/Desktop/your_folder/linG3DClone.R")
+3.	Run the function. For example, to run linG3DClone.R type on the console,
+             linG3DClone(arguments)
                           
 Python:
        You can run the .py scripts from the terminal
@@ -78,7 +78,7 @@ iv)	linG3DClone
 
 **Authors**
 Anjun Hu,
-Maureiq Ojwang’,
+Awino Maureiq E. Ojwang’,
 Kayode Olumoyin,
 Katarzyna Rejniak
 
