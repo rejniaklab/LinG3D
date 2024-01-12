@@ -65,6 +65,10 @@ OPTION 2 (Use the routines)
 Python:
        You can run the .py scripts from the terminal
        
+       Terminal> git clone https://github.com/rejniaklab/LinG3D.git
+
+       Terminal> cd LinG3D
+
        Terminal> python3 linG3DAliveAll.py
        
        Terminal> python3 linG3DAliveClone.py
