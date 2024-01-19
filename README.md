@@ -71,13 +71,8 @@ Python:
 $ git clone https://github.com/rejniaklab/LinG3D.git
 $ cd LinG3D
 $ python3 linG3DAliveAll.py
-```
-```bash
-
 $ python3 linG3DAliveClone.py
-
 $ python3 linG3DAll.py
-
 $ python3 linG3DClone.py
 ```
 
