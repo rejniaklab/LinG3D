@@ -91,19 +91,11 @@ iii)	linG3DAll
 iv)	linG3DClone
 
 ## Example
-
-pathData='exampleB05'
-cloneNum=5
-toPrint=1                # save the final figure
-IsGradient = 1           # draw drug gradient in the background 1-yes; 0-no;
-xmin=-100; xmax=100; ymin=xmin; ymax=xmax  # 2D domain boundaries
-tmin=0; tmax=100000                        # time/iteration boundaries
-fileStep = 2000       # frequency of data 
     
-linG3DClone(pathData,cloneNum,IsGradient,xmin,xmax,ymin,ymax,tmin,tmax,fileStep,toPrint)
+#### linG3DClone(pathData='exampleB05',cloneNum=5,IsGradient = 1,xmin=-100,xmax=100,ymin=-100,ymax=100,tmin=0,tmax=100000,fileStep = 2000,toPrint=1)
 
 <div style="margin:2%";>  
-    <img src="https://github.com/okayode/pyLinG3D/blob/okayode/exampleB05/fig_clones/tree_clone_5.jpg?raw=true"; alt="tree_clone_5"; width=50%;/>
+    <img src="https://github.com/okayode/pyLinG3D/blob/okayode/exampleB05/fig_clones/tree_clone_5.jpg?raw=true"; alt="tree_clone_5"; width=30%;/>
 </div>
 
 ## Authors
