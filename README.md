@@ -1,10 +1,12 @@
 # Project Title
+
 ## LinG3D: Visualizing the Spatio-Temporal Dynamics of Clonal Evolution
 
-**Description**
+## Description
+
 This code generates the 3D lineage trees of (1) all clones; (2) individual clones; (3) all clones , but with only those cells that survived to the end of simulation; and (4) individual clones containing only those cells that survived to the end of simulation – see the quick guide to LinG3D routines. The code is generated in three programming languages: Matlab, R, and Python.
 
-**Dependencies**
+## Dependencies
 
 MATLAB software (the R2020b version on a Mac computer was used for all testing)
 
@@ -12,7 +14,7 @@ R language (the R version 4.1.1 on a Mac computer (macOS Big Sur) was used for a
 
 Python (version >3.8 on a Mac computer was used for testing)
 
-**Installing**
+## Installing
 
 Matlab: this code does not need installation
 
@@ -34,7 +36,7 @@ Python: It requires the following libraries:
          
          Matplotlib
          
-**Executing the program**
+## Executing the program**
 
 Matlab: 
 Download all MATLAB files (add all files and folders to your MATLAB path)
@@ -80,22 +82,24 @@ Python:
        The codes are also available as Jupyter notebooks
 
 
-**File manifest**
+## File manifest
+
 The following set of functions are available, and explained in detail in the quick guide to LinG3D routines.
 i)	linG3DAliveAll
 ii)	linG3DAliveClone
 iii)	linG3DAll
 iv)	linG3DClone
 
-**Authors**
+## Authors
+
 Anjun Hu,
 Awino Maureiq E. Ojwang’,
 Kayode Olumoyin,
 Katarzyna Rejniak
 
-**Version**
+## Version
 0.1
 Initial release
 
-**License**
+## License
 This project is licensed under the GNU General Public License v3.0.
