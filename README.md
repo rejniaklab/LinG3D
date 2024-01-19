@@ -69,11 +69,10 @@ Python:
 
 ```bash
 $ git clone https://github.com/rejniaklab/LinG3D.git
+$ cd LinG3D
+$ python3 linG3DAliveAll.py
 ```
 ```bash
-$ cd LinG3D
-
-$ python3 linG3DAliveAll.py
 
 $ python3 linG3DAliveClone.py
 
