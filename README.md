@@ -1,5 +1,5 @@
-**Project Title**
-LinG3D: Visualizing the Spatio-Temporal Dynamics of Clonal Evolution
+# Project Title
+## LinG3D: Visualizing the Spatio-Temporal Dynamics of Clonal Evolution
 
 **Description**
 This code generates the 3D lineage trees of (1) all clones; (2) individual clones; (3) all clones , but with only those cells that survived to the end of simulation; and (4) individual clones containing only those cells that survived to the end of simulation – see the quick guide to LinG3D routines. The code is generated in three programming languages: Matlab, R, and Python.
