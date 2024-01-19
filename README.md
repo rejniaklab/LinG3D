@@ -97,7 +97,7 @@ linG3DClone(pathData='exampleB05',cloneNum=5,IsGradient = 1,xmin=-100,xmax=100,y
 ```
 
 <div style="margin:2%";>  
-    <img src="https://github.com/okayode/pyLinG3D/blob/okayode/exampleB05/fig_clones/tree_clone_5.jpg?raw=true"; alt="tree_clone_5"; width=30%;/>
+    <img src="https://github.com/okayode/pyLinG3D/blob/okayode/exampleB05/fig_clones/tree_clone_5.jpg?raw=true"; alt="tree_clone_5"; width=10%;/>
 </div>
 
 ## Authors
