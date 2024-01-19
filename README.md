@@ -30,13 +30,13 @@ R: the required libraries are readr, rapportools, rgl, and devtools.
         
 Python: It requires the following libraries:
 
-         Numpy
-        
-         Scipy
+```bash
+Numpy
+Scipy
+Matplotlib
+```
          
-         Matplotlib
-         
-## Executing the program**
+## Executing the program
 
 Matlab: 
 Download all MATLAB files (add all files and folders to your MATLAB path)
