@@ -67,21 +67,21 @@ OPTION 2 (Use the routines)
 Python:
        You can run the .py scripts from the terminal
 
-       ```bash
-       $ git clone https://github.com/rejniaklab/LinG3D.git
+```bash
+$ git clone https://github.com/rejniaklab/LinG3D.git
 
-       $ cd LinG3D
+$ cd LinG3D
 
-       $ python3 linG3DAliveAll.py
+$ python3 linG3DAliveAll.py
 
-       $ python3 linG3DAliveClone.py
+$ python3 linG3DAliveClone.py
 
-       $ python3 linG3DAll.py
+$ python3 linG3DAll.py
 
-       $ python3 linG3DClone.py
-       ```
-       
-       The codes are also available as Jupyter notebooks
+$ python3 linG3DClone.py
+```
+
+The codes are also available as Jupyter notebooks
 
 
 ## File manifest
