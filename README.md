@@ -92,7 +92,9 @@ iv)	linG3DClone
 
 ## Example
     
-#### linG3DClone(pathData='exampleB05',cloneNum=5,IsGradient = 1,xmin=-100,xmax=100,ymin=-100,ymax=100,tmin=0,tmax=100000,fileStep = 2000,toPrint=1)
+```python
+linG3DClone(pathData='exampleB05',cloneNum=5,IsGradient = 1,xmin=-100,xmax=100,ymin=-100,ymax=100,tmin=0,tmax=100000,fileStep = 2000,toPrint=1)
+```
 
 <div style="margin:2%";>  
     <img src="https://github.com/okayode/pyLinG3D/blob/okayode/exampleB05/fig_clones/tree_clone_5.jpg?raw=true"; alt="tree_clone_5"; width=30%;/>
