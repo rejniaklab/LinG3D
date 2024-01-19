@@ -66,19 +66,21 @@ OPTION 2 (Use the routines)
                           
 Python:
        You can run the .py scripts from the terminal
-       
-       Terminal> git clone https://github.com/rejniaklab/LinG3D.git
 
-       Terminal> cd LinG3D
+       ```bash
+       $ git clone https://github.com/rejniaklab/LinG3D.git
 
-       Terminal> python3 linG3DAliveAll.py
+       $ cd LinG3D
+
+       $ python3 linG3DAliveAll.py
+
+       $ python3 linG3DAliveClone.py
+
+       $ python3 linG3DAll.py
+
+       $ python3 linG3DClone.py
+       ```
        
-       Terminal> python3 linG3DAliveClone.py
-       
-       Terminal> python3 linG3DAll.py
-       
-       Terminal> python3 linG3DClone.py
-     
        The codes are also available as Jupyter notebooks
 
 
