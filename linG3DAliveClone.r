@@ -63,9 +63,9 @@ view3d()
 add_axes <- function(x, y, z, axis.col = NA) {   
   minnum <- function(k){c(-max(abs(k)), max(abs(k))) * 1.05}  
   xminnum <- minnum(x);  zminnum <- minnum(z); 
-  rgl.lines(xminnum, c(0, 0), c(0, 0), color = NA)
-  rgl.lines(c(0, 0), y, c(0, 0), color = NA)
-  rgl.lines(c(0, 0), c(0, 0), zminnum, color = NA) } # needed to properly position the 3D
+  segments3d(xminnum, c(0, 0), c(0, 0), color = NA)
+  segments3d(c(0, 0), y, c(0, 0), color = NA)
+  segments3d(c(0, 0), c(0, 0), zminnum, color = NA) } # needed to properly position the 3D
 add_axes(c(xmin,xmax),c(0,tmax/timeStep),c(ymin,ymax))  # set the axes
 aspect3d(1, 2, 1)  # required aspect ratio x=1, y=2, z=1
 grid3d(c("x+-","y+","z-"), col = "#DCDCDC", n = 6)  # set grid on the visible axes only
