@@ -36,7 +36,6 @@ options(scipen = 999)
 
 #---------------------------parameters---------------------------------#
 
-# parameters
 pathData <- pathData  # exampleB05 or exampleB005
 numClones=numClones;
 toPrint <- toPrint  # save the final figure 1-yes; 0-no;
@@ -62,9 +61,9 @@ view3d()
 add_axes <- function(x, y, z, axis.col = NA) {   
   minnum <- function(k){c(-max(abs(k)), max(abs(k))) * 1.05}  
   xminnum <- minnum(x);  zminnum <- minnum(z); 
-  rgl.lines(xminnum, c(0, 0), c(0, 0), color = NA)
-  rgl.lines(c(0, 0), y, c(0, 0), color = NA)
-  rgl.lines(c(0, 0), c(0, 0), zminnum, color = NA) } # needed to properly position the 3D
+  segments3d(xminnum, c(0, 0), c(0, 0), color = NA)
+  segments3d(c(0, 0), y, c(0, 0), color = NA)
+  segments3d(c(0, 0), c(0, 0), zminnum, color = NA) } # needed to properly position the 3D
 add_axes(c(xmin,xmax),c(0,tmax/timeStep),c(ymin,ymax))  # set the axes
 aspect3d(1, 2, 1)  # required aspect ratio x=1, y=2, z=1
 grid3d(c("x+-","y+","z-"), col = "#DCDCDC", n = 6)  # set grid on the visible axes only
@@ -134,18 +133,18 @@ DrawBackground <- function(drug,tmax,timeStep,xmin,xmax,ymin,ymax){
 
 # draw background with drug gradient
 if (IsGradient==1){
-  drug <- read.table(paste0(pathData,dataDirectory,"drug.txt"),header = F)
+  drug <- read.table(paste0(pathData,dataDirectory,"/drug.txt"),header = F)
   DrawBackground(drug,tmax,timeStep,xmin,xmax,ymin,ymax)
 }
 
 #--------------------------draw trees------------------------------------------#
 
 # load cell history file
-hist <- read.table(paste0(pathData,dataDirectory,"cell_history.txt"),header = F)
+hist <- read.table(paste0(pathData,dataDirectory,"/cell_history.txt"),header = F)
 # [cell ID, clone ID, mother ID, birth iter, div/death iter]
 
 # load indices of all survived cells
-cellID <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",tmax,".txt"),header = F))
+cellID <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellID_",tmax,".txt"),header = F))
 
 # identify all survived cells for a given clone
 for (cloneNum in 0:numClones) {
@@ -193,15 +192,15 @@ for (ii in 1:length(indLast)) { # for every cell with index in indLast
   while (i>=(kkStart+fileStep)) { vec[j] <- i; i <- i-fileStep; j <- j+1;}
   
   for (kk in vec) {
-    fileMeID  <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kk,".txt"),header = F),dimnames=NULL)
+    fileMeID  <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellID_",kk,".txt"),header = F),dimnames=NULL)
     colnames(fileMeID) <- NULL;
-    fileMeXY  <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kk,".txt"),header = F),dimnames=NULL)
+    fileMeXY  <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellXY_",kk,".txt"),header = F),dimnames=NULL)
     colnames(fileMeXY) <- NULL;
     indMe = which(fileMeID==cellNum)  # which current indices of cellID
     # cell ID and cell XY from the second file
-    fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kk-fileStep,".txt"),header = F),dimnames=NULL)
+    fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellID_",kk-fileStep,".txt"),header = F),dimnames=NULL)
     colnames(fileMe2ID) <- NULL;
-    fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kk-fileStep,".txt"),header = F),dimnames=NULL)
+    fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellXY_",kk-fileStep,".txt"),header = F),dimnames=NULL)
     colnames(fileMe2XY) <- NULL;
     indMe2 = which(fileMe2ID==cellNum)  # which current indices of cellID
     
@@ -210,9 +209,9 @@ for (ii in 1:length(indLast)) { # for every cell with index in indLast
       while (kkStart<hist[mothNum,4]){  # find file with the grand-mother cell
         mothNum <- hist[mothNum,3]
       }
-      fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kkStart,".txt"),header = F),dimnames=NULL)
+      fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellID_",kkStart,".txt"),header = F),dimnames=NULL)
       colnames(fileMe2ID) <- NULL;
-      fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kkStart,".txt"),header = F),dimnames=NULL)
+      fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellXY_",kkStart,".txt"),header = F),dimnames=NULL)
       colnames(fileMe2XY) <- NULL;
       indMe2=which(fileMe2ID==mothNum)  # which current indices of mother cellID
       
@@ -248,15 +247,15 @@ for (ii in 1:length(indLast)) { # for every cell with index in indLast
   
   for (kk in vec) {
     # cell ID and cell XY from the first file
-    fileMeID  <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kk,".txt"),header = F),dimnames=NULL)
+    fileMeID  <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellID_",kk,".txt"),header = F),dimnames=NULL)
     colnames(fileMeID) <- NULL;
-    fileMeXY  <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kk,".txt"),header = F),dimnames=NULL)
+    fileMeXY  <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellXY_",kk,".txt"),header = F),dimnames=NULL)
     colnames(fileMeXY) <- NULL;
     indMe = which(fileMeID==cellNum)  # which current indices of cellID
     # cell ID and cell XY from the second file
-    fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kk-fileStep,".txt"),header = F),dimnames=NULL)
+    fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellID_",kk-fileStep,".txt"),header = F),dimnames=NULL)
     colnames(fileMe2ID) <- NULL;
-    fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kk-fileStep,".txt"),header = F),dimnames=NULL)
+    fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellXY_",kk-fileStep,".txt"),header = F),dimnames=NULL)
     colnames(fileMe2XY) <- NULL;
     indMe2 = which(fileMe2ID==cellNum)  # which current indices of cellID
     
@@ -265,9 +264,9 @@ for (ii in 1:length(indLast)) { # for every cell with index in indLast
       while (kkStart<hist[mothNum,4]){  # find file with the grand-mother cell
         mothNum <- hist[mothNum,3]
       }
-      fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kkStart,".txt"),header = F),dimnames=NULL)
+      fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellID_",kkStart,".txt"),header = F),dimnames=NULL)
       colnames(fileMe2ID) <- NULL;
-      fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kkStart,".txt"),header = F),dimnames=NULL)
+      fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellXY_",kkStart,".txt"),header = F),dimnames=NULL)
       colnames(fileMe2XY) <- NULL;
       indMe2=which(fileMe2ID==mothNum)  # which current indices of mother cellID
       
