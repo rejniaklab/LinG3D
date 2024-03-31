@@ -63,9 +63,9 @@ view3d()
 rgl_add_axes <- function(x, y, z, axis.col = NA) {   
   lim <- function(k){c(-max(abs(k)), max(abs(k))) * 1.05}  
   xlim <- lim(x); ylim <- y; zlim <- lim(z); 
-  rgl.lines(xlim, c(0, 0), c(0, 0), color = NA)
-  rgl.lines(c(0, 0), ylim, c(0, 0), color = NA)
-  rgl.lines(c(0, 0), c(0, 0), zlim, color = NA) } # needed to properly position the 3D
+  segments3d(xlim, c(0, 0), c(0, 0), color = NA)
+  segments3d(c(0, 0), ylim, c(0, 0), color = NA)
+  segments3d(c(0, 0), c(0, 0), zlim, color = NA) } # needed to properly position the 3D
 rgl_add_axes(c(xmin,xmax),c(0,tmax/timeStep),c(ymin,ymax))  # set the axes
 aspect3d(1, 2, 1)  # required aspect ratio x=1, y=2, z=1
 grid3d(c("x+-","y+","z-"), col = "#DCDCDC", n = 6)  # set grid on the visible axes only
@@ -135,14 +135,14 @@ DrawBackground <- function(drug,tmax,timeStep,xmin,xmax,ymin,ymax){
 
 # draw background with drug gradient
 if (IsGradient==1){
-  drug <- read.table(paste0(pathData,dataDirectory,"drug.txt"),header = F)
+  drug <- read.table(paste0(pathData,dataDirectory,"/drug.txt"),header = F)
   DrawBackground(drug,tmax,timeStep,xmin,xmax,ymin,ymax)
 }
 
 #--------------------------draw trees------------------------------------------#
 
 # load cell history file
-hist <- read.table(paste0(pathData,dataDirectory,"cell_history.txt"),header = F)
+hist <- read.table(paste0(pathData,dataDirectory,"/cell_history.txt"),header = F)
 
 for (cloneNum in 0:numClones) {
 print(paste0("clone = ",cloneNum," of ",numClones))
@@ -169,15 +169,15 @@ for (ii in 1:length(indLast)){  # for every cell with index in indLast
   
   for (kk in vec) {
     # cell ID and cell XY from the first file
-    fileMeID  <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kk,".txt"),header = F),dimnames=NULL)
+    fileMeID  <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellID_",kk,".txt"),header = F),dimnames=NULL)
     colnames(fileMeID) <- NULL;
-    fileMeXY  <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kk,".txt"),header = F),dimnames=NULL)
+    fileMeXY  <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellXY_",kk,".txt"),header = F),dimnames=NULL)
     colnames(fileMeXY) <- NULL;
     indMe = which(fileMeID==cellNum)  # which current indices of cellID
     # cell ID and cell XY from the second file
-    fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kk-fileStep,".txt"),header = F),dimnames=NULL)
+    fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellID_",kk-fileStep,".txt"),header = F),dimnames=NULL)
     colnames(fileMe2ID) <- NULL;
-    fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kk-fileStep,".txt"),header = F),dimnames=NULL)
+    fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellXY_",kk-fileStep,".txt"),header = F),dimnames=NULL)
     colnames(fileMe2XY) <- NULL;
     indMe2 = which(fileMe2ID==cellNum)  # which current indices of cellID
     
@@ -186,9 +186,9 @@ for (ii in 1:length(indLast)){  # for every cell with index in indLast
       while (kkStart<hist[mothNum,4]){ # which file with the grand-mother cell
         mothNum <- hist[mothNum,3]
       }
-      fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kkStart,".txt"),header = F),dimnames=NULL)
+      fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellID_",kkStart,".txt"),header = F),dimnames=NULL)
       colnames(fileMe2ID) <- NULL;
-      fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kkStart,".txt"),header = F),dimnames=NULL)
+      fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellXY_",kkStart,".txt"),header = F),dimnames=NULL)
       colnames(fileMe2XY) <- NULL;
       indMe2=which(fileMe2ID==mothNum)  # which current indices of mother cellID
       if (is.empty(indMe2)){
@@ -227,15 +227,15 @@ for (ii in 1:length(indLast)){# for every cell with index in indLast
   
   for (kk in vec) {
     # cell ID and cell XY from the first file
-    fileMeID  <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kk,".txt"),header = F),dimnames=NULL)
+    fileMeID  <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellID_",kk,".txt"),header = F),dimnames=NULL)
     colnames(fileMeID) <- NULL;
-    fileMeXY  <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kk,".txt"),header = F),dimnames=NULL)
+    fileMeXY  <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellXY_",kk,".txt"),header = F),dimnames=NULL)
     colnames(fileMeXY) <- NULL;
     indMe = which(fileMeID==cellNum)  # which current indices of cellID
     # cell ID and cell XY from the second file
-    fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kk-fileStep,".txt"),header = F),dimnames=NULL)
+    fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellID_",kk-fileStep,".txt"),header = F),dimnames=NULL)
     colnames(fileMe2ID) <- NULL;
-    fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kk-fileStep,".txt"),header = F),dimnames=NULL)
+    fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellXY_",kk-fileStep,".txt"),header = F),dimnames=NULL)
     colnames(fileMe2XY) <- NULL;
     indMe2 = which(fileMe2ID==cellNum)  # which current indices of cellID
     
@@ -244,9 +244,9 @@ for (ii in 1:length(indLast)){# for every cell with index in indLast
       while (kkStart<hist[mothNum,4]){ # which file with the grand-mother cell
         mothNum <- hist[mothNum,3]
       }
-      fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellID_",kkStart,".txt"),header = F),dimnames=NULL)
+      fileMe2ID <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellID_",kkStart,".txt"),header = F),dimnames=NULL)
       colnames(fileMe2ID) <- NULL;
-      fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"cellXY_",kkStart,".txt"),header = F),dimnames=NULL)
+      fileMe2XY <- as.matrix(read.table(paste0(pathData,dataDirectory,"/cellXY_",kkStart,".txt"),header = F),dimnames=NULL)
       colnames(fileMe2XY) <- NULL;
       indMe2=which(fileMe2ID==mothNum)  # which current indices of mother cellID
       if (is.empty(indMe2)){
